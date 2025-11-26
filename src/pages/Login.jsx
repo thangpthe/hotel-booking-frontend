@@ -32,6 +32,7 @@ const handleSubmit = async (e) => {
     if (data.success) {
       toast.success("Login successful!");
       setUser(data.user);
+      localStorage.setItem("user", JSON.stringify(data.user));
       
       if (data.user.role === "owner") {
         setOwner(true);

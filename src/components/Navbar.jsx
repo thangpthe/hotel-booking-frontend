@@ -22,7 +22,7 @@ function Navbar() {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
   
-  const { navigate, user, setUser, isOwner, logout } = useContext(AppContext);
+  const { navigate, user, setUser, isOwner } = useContext(AppContext);
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
@@ -59,22 +59,18 @@ function Navbar() {
   const handleLogout = async () => {
     handleCloseUserMenu();
     try {
-      const { data } = await axios.post("/api/user/logout", {}, {
-        withCredentials: true
-      });
+      const { data } = await axios.post(
+        "/api/user/logout", 
+        {}, 
+        { withCredentials: true }
+      );
       
       if (data.success) {
         toast.success("Logged out successfully!");
-        // Use logout from context to clear all states
-        if (logout) {
-          logout();
-        } else {
-          // Fallback if logout function not available
-          setUser(null);
-          navigate('/');
-        }
-      } else {
-        toast.error("Logout failed");
+        // Reset state
+        setUser(null);
+        localStorage.removeItem('user');
+        navigate('/');
       }
     } catch (error) {
       console.log(error);
