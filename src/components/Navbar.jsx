@@ -59,23 +59,23 @@ function Navbar() {
   const handleLogout = async () => {
     handleCloseUserMenu();
     try {
-      const { data } = await axios.post(
-        "/api/user/logout", 
-        {}, 
-        { withCredentials: true }
-      );
-      
-      if (data.success) {
-        toast.success("Logged out successfully!");
-        // Reset state
-        setUser(null);
-        localStorage.removeItem('user');
-        navigate('/');
-      }
-    } catch (error) {
-      console.log(error);
-      toast.error("Logout failed");
+    const { data } = await axios.post("/api/user/logout", {}, {
+      withCredentials: true
+    });
+    
+    setUser(null);
+    localStorage.removeItem('user');
+    navigate('/');
+    
+    if (data.success) {
+      toast.success("Logged out successfully!");
     }
+  } catch (error) {
+    setUser(null);
+    localStorage.removeItem('user');
+    navigate('/');
+    console.log(error);
+  }
   };
 
   return (
