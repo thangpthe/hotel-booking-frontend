@@ -49,7 +49,7 @@ const OwnerLayout = () => {
 
   const handleLogout = async() => {
     try{
-          const {data} = await axios.get("/api/user/logout");
+          const {data} = await axios.post("/api/user/logout");
           if(data.success){
              toast.success("Logout success!");
              setOwner(false);
