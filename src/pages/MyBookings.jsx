@@ -10,7 +10,7 @@ import PeopleIcon from '@mui/icons-material/People';
 import PaymentIcon from '@mui/icons-material/Payment';
 import axios from 'axios';
 import toast from 'react-hot-toast';
-
+const backendUrl = import.meta.env.VITE_BACKEND_URL;
 const MyBookings = () => {
   const [bookingData, setBookingData] = useState([]);
   
@@ -131,7 +131,7 @@ const MyBookings = () => {
                       borderRadius: 2, 
                       objectFit: 'cover' 
                     }}
-                    image={`http://localhost:4000/images/${booking.room.images[0]}`} 
+                    image={`${backendUrl}/images/${booking.room.images[0]}`} 
                     alt={booking.hotel.hotelName}
                   />
                   

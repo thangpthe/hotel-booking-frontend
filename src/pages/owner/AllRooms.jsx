@@ -12,6 +12,7 @@ import StarIcon from '@mui/icons-material/Star';
 import PhoneIcon from '@mui/icons-material/Phone';
 import axios from 'axios';
 import toast from 'react-hot-toast';
+const backendUrl = import.meta.env.VITE_BACKEND_URL;
 const AllRooms = () => {
   const {navigate} = useContext(AppContext);
   const [roomData,setRoomData] = useState([]);
@@ -85,7 +86,7 @@ const AllRooms = () => {
                 <Stack direction="row" alignItems="center" spacing={2}>
                   <CardMedia 
                     component="img" 
-                    src={`http://localhost:4000/images/${room.images[0]}`}
+                    src={`${backendUrl}/images/${room.images[0]}`}
                     alt={room.roomType}
                     sx={{ 
                       width: 60,       

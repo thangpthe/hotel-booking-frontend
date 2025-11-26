@@ -1,13 +1,13 @@
 import React, { useContext } from 'react'
 import { AppContext } from '../context/AppContext'
 import { Box, Button, Card, CardActions, CardContent, CardMedia, Chip, Typography } from '@mui/material';
-
+const backendUrl = import.meta.env.VITE_BACKEND_URL;
 const RoomCard = ({room}) => {
   const {navigate} = useContext(AppContext);
   return (
     <Card>
       <Box sx={{position:'relative'}}>
-        <CardMedia component="img" sx={{objectFit:'cover;',height:'220px'}} image={`http://localhost:4000/images/${room.images[0]}`} alt={room.roomType}/>
+        <CardMedia component="img" sx={{objectFit:'cover;',height:'220px'}} image={`${backendUrl}/${room.images[0]}`} alt={room.roomType}/>
         <Chip label={`$${room.pricePerNight} / per night`} color='primary' sx={{position:'absolute',top:16,right:16}}/>
       </Box>
       <Box>

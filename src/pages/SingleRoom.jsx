@@ -43,7 +43,7 @@ import axios from 'axios';
 import toast from 'react-hot-toast';
 import { useState } from 'react';
 import { useEffect } from 'react';
-
+const backendUrl = import.meta.env.VITE_BACKEND_URL;
 const SingleRoom = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -277,7 +277,7 @@ const SingleRoom = () => {
                 }}>
                   <Box
                     component="img"
-                    src={`http://localhost:4000/images/${roomData.images?.[selectedImage]}`}
+                    src={`${backendUrl}/images/${roomData.images?.[selectedImage]}`}
                     alt="Main Room Image"
                     sx={{
                       width: '100%',
@@ -308,7 +308,7 @@ const SingleRoom = () => {
                     <Box
                       key={index}
                       component="img"
-                      src={`http://localhost:4000/images/${img}`}
+                      src={`${backendUrl}/images/${img}`}
                       sx={{
                         width: { xs: '80px', sm: '100px', md: '100%' },
                         height: { xs: '80px', sm: '100px', md: '23%' },

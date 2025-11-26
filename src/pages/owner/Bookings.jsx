@@ -10,7 +10,7 @@ import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import BedIcon from '@mui/icons-material/Bed';
 import axios from 'axios';
 import toast from 'react-hot-toast';
-
+const backendUrl = import.meta.env.VITE_BACKEND_URL;
 const Bookings = () => {
   const [bookingData,setBookingData] = useState([]);
   const fetchMyBookings = async () => {
@@ -75,7 +75,7 @@ const Bookings = () => {
                 <CardMedia
                   component="img"
                   sx={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                  image={`http://localhost:4000/images/${booking.room.images[0]}`} 
+                  image={`${backendUrl}/images/${booking.room.images[0]}`} 
                   alt={booking.hotel.hotelName}
                 />
               </Box>

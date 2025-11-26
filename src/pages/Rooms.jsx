@@ -5,7 +5,7 @@ import axios from 'axios';
 import toast from 'react-hot-toast';
 import { Box, Container, Grid, Typography } from '@mui/material';
 import RoomCard from '../components/RoomCard';
-
+// const backendUrl = import.meta.env.VITE_BACKEND_URL;
 const Rooms = () => {
 
   const [roomData,setRoomData] = useState([]);
