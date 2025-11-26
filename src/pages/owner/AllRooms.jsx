@@ -19,7 +19,7 @@ const AllRooms = () => {
 
   const fetchOwnerRooms = async () => {
     try {
-      const {data} = await axios.get("/api/room/get");    
+      const {data} = await axios.get("/api/room/get",{ withCredentials: true });    
       if(data.success){
         setRoomData(data.rooms);
       }else{
@@ -33,7 +33,7 @@ const AllRooms = () => {
 
   useEffect(() => {
     fetchOwnerRooms();
-  },[roomData]);
+  },[]);
 
   const deleteHotel = async(id) => {
     try {

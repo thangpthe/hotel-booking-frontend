@@ -64,7 +64,7 @@ const RegisterHotel = () => {
     formData.append("image",imageFile);
     console.log(formData);
     try {
-      const {data} = await axios.post("/api/hotel/register",formData);
+      const {data} = await axios.post("/api/hotel/register",formData,{withCredentials: true});
       if(data.success){
          toast.success('Hotel registered successfully!');
          navigate('/owner');

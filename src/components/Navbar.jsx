@@ -70,7 +70,7 @@ function Navbar() {
     if (data.success) {
       toast.success("Logged out successfully!");
     }
-  } catch (error) {
+  } catch (error) { 
     setUser(null);
     localStorage.removeItem('user');
     navigate('/');

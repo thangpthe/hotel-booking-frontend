@@ -15,7 +15,7 @@ const Bookings = () => {
   const [bookingData,setBookingData] = useState([]);
   const fetchMyBookings = async () => {
     try {
-      const {data} = await axios.get("/api/bookings/hotel");
+      const {data} = await axios.get("/api/bookings/hotel",{withCredentials: true});
       
       if(data.success){
         setBookingData(data.bookings);
