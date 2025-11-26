@@ -3,7 +3,7 @@ import React, {useEffect, useState } from 'react'
 import { AppContext } from '../context/AppContext'
 import { Box, Card, CardContent, CardMedia, Chip, Container, Grid, Stack, Typography } from '@mui/material';
 import axios from 'axios';
-
+const backendUrl = import.meta.env.VITE_BACKEND_URL;
 const MostPicked = () => {
     const [hotelData,setHotelData] = useState([]);
     const fetchHotels = async () => {
@@ -48,7 +48,7 @@ const MostPicked = () => {
                   }
                 }}>
                 <Box sx={{position:'relative'}}>
-                    <CardMedia component="img" height="220px" sx={{objectFit:'cover' }} image={`http://localhost:4000/images/${item.image}`} alt={item.otelName}/>
+                    <CardMedia component="img" height="220px" sx={{objectFit:'cover' }} image={`${backendUrl}/images/${item.image}`} alt={item.otelName}/>
                     <Chip label={`$${item.price}`} color='primary' sx={{position:'absolute',top:16,right:16}}/>
                 </Box>
                 <CardContent sx={{ flexGrow: 1 }}>

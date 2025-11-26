@@ -7,7 +7,7 @@ const RoomCard = ({room}) => {
   return (
     <Card>
       <Box sx={{position:'relative'}}>
-        <CardMedia component="img" sx={{objectFit:'cover;',height:'220px'}} image={`${backendUrl}/${room.images[0]}`} alt={room.roomType}/>
+        <CardMedia component="img" sx={{objectFit:'cover;',height:'220px'}} image={`${backendUrl}/images/${room.images[0]}`} alt={room.roomType}/>
         <Chip label={`$${room.pricePerNight} / per night`} color='primary' sx={{position:'absolute',top:16,right:16}}/>
       </Box>
       <Box>
