@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 80" width="300" height="80">
+          <g transform="translate(10, 5)">
+            <path d="M24 0 C10.7 0 0 10.7 0 24 C0 36 18 58 24 66 C30 58 48 36 48 24 C48 10.7 37.3 0 24 0 Z" fill="#1976D2"/>
+            <path d="M24 8 L10 20 H14 V34 H34 V20 H38 L24 8Z" fill="#FFFFFF"/>
+          </g>
+         
+          <text x="65" y="50" font-family="'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="34" font-weight="500">
+            <tspan fill="#37474F">my</tspan><tspan fill="#1976D2" font-weight="900" letter-spacing="-1">booking</tspan>
+          </text>
+</svg>

@@ -1,0 +1,96 @@
+/* auth.css */
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap');
+*{
+    font-family: "Outfit",sans-serif;
+}
+.auth-container {
+  width: 100%;
+  max-width: 400px;
+  margin: 50px auto;
+  padding: 30px;
+  border-radius: 12px; /* Bo tròn góc form */
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); /* Đổ bóng nhẹ */
+  background-color: white;
+}
+
+.auth-container h2 {
+  text-align: center;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #555;
+}
+
+/* --- PHẦN QUAN TRỌNG: Style cho Input có Icon --- */
+.input-wrapper {
+  display: flex;
+  align-items: center;
+  border: 1px solid #ddd;
+  border-radius: 8px; /* Bo tròn ô input */
+  padding: 10px 15px;
+  transition: border-color 0.3s;
+  background: #f9f9f9;
+}
+
+/* Khi người dùng bấm vào thì đổi màu viền */
+.input-wrapper:focus-within {
+  border-color: #007bff; /* Màu xanh chủ đạo */
+  background: #fff;
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.1);
+}
+
+/* Chỉnh màu cho Icon */
+.input-icon {
+  color: #888;
+  margin-right: 10px;
+  font-size: 20px !important; /* Cỡ icon của MUI */
+}
+
+/* Input bên trong sẽ bỏ viền để hòa nhập với wrapper */
+.input-wrapper input,
+.input-wrapper select {
+  border: none;
+  outline: none;
+  background: transparent;
+  flex-grow: 1; /* Chiếm hết khoảng trống còn lại */
+  font-size: 16px;
+  color: #333;
+  width: 100%;
+}
+
+.btn-primary {
+  width: 100%;
+  padding: 12px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.btn-primary:hover {
+  background-color: #0056b3;
+}
+
+.auth-links {
+  margin-top: 15px;
+  text-align: center;
+  font-size: 14px;
+}
+
+.auth-links a {
+  color: #007bff;
+  text-decoration: none;
+}
