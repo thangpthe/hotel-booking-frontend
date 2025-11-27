@@ -24,7 +24,7 @@ const drawerWidth = 240;
 const OwnerLayout = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const {owner,setOwner,user} = useContext(AppContext);
+  const {owner,setOwner,user,setUser} = useContext(AppContext);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [anchorElUser, setAnchorElUser] = useState(null);
   
@@ -49,20 +49,33 @@ const OwnerLayout = () => {
 
   const handleLogout = async() => {
     try{
-          const {data} = await axios.post("/api/user/logout");
-          if(data.success){
-             toast.success("Logout success!");
-             setOwner(false);
-             navigate('/'); 
-          }
-          else{
-            toast.error("Logout fail");
-          }
-        }catch(error){
-          console.log(error);
-          toast.error("Logout fail");
-        }
+          const {data} = await axios.post("/api/user/logout",{},{withCredentials:true});
+        //   if(data.success){
+        //      toast.success("Logout success!");
+        //      setOwner(false);
+        //      navigate('/'); 
+        //   }
+        //   else{
+        //     toast.error("Logout fail");
+        //   }
+        // }catch(error){
+        //   console.log(error);
+        //   toast.error("Logout fail");
+        // }
+        setUser(null);
+    localStorage.removeItem('user');
+    navigate('/');
+    
+    if (data.success) {
+      toast.success("Logged out successfully!");
+    }
+  } catch (error) { 
+    setUser(null);
+    localStorage.removeItem('user');
+    navigate('/');
+    console.log(error);
   };
+}
 
   
   const drawer = (
