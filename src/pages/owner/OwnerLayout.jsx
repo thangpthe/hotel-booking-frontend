@@ -170,7 +170,7 @@ const OwnerLayout = () => {
 
           <Box sx={{ display:'flex',flexGrow: 1 ,gap:2,alignItems:'center',justifyContent:'flex-end'}}>
             <Typography variant="body1" sx={{ fontWeight: 500, color: '#333', display: { xs: 'none', sm: 'block' } }}>
-              Hi, owner
+             Hi, {user?.name || 'Owner'}
             </Typography>
             
             <Button variant='contained' onClick={handleLogout}>Logout</Button>
