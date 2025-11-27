@@ -28,7 +28,6 @@ const AppContextProvider = ({children}) => {
 
     const checkAuth = async () => {
         try {
-            // console.log('🔍 Checking authentication...');
             const { data } = await axios.get('/api/user/profile');
             
             // console.log('✅ Profile response:', data);
@@ -42,13 +41,13 @@ const AppContextProvider = ({children}) => {
                 setOwner(false);
             }
         } catch (error) {
-            console.log('Not authenticated:', error.response?.data?.message || error.message);
-            setUser(null);
-            setOwner(false);
-            
-            // Clear invalid token
-            localStorage.removeItem('token');
-            delete axios.defaults.headers.common['Authorization'];
+                console.log('Not authenticated');
+                if (error.response?.status === 401) {
+                    localStorage.removeItem('token');
+                    delete axios.defaults.headers.common['Authorization'];
+                    setUser(null);
+                    setOwner(false);
+         }
         } finally {
             setLoading(false);
         }
@@ -72,7 +71,7 @@ const AppContextProvider = ({children}) => {
     const value = {navigate,user,setUser,owner,setOwner,axios, loading,logout,checkAuth};
     return(
         <AppContext.Provider value={value}>
-            {children}
+            {!loading && children}
         </AppContext.Provider>
     )
 }
