@@ -17,7 +17,7 @@ const MyBookings = () => {
   const fetchMyBookings = async () => {
     try {
       const {data} = await axios.get("/api/bookings/user",{withCredentials: true});
-      console.log(data);
+      // console.log(data);
       
       if(data.success){
         setBookingData(data.bookings);
