@@ -10,15 +10,45 @@ const BACKEND_URL = import.meta.env.VITE_BACKEND_URL
   || 'https://hotel-booking-backend-production-aec5.up.railway.app';
 
 axios.defaults.baseURL = BACKEND_URL;
-
-console.log('🔗 Backend URL:', BACKEND_URL);
 export const AppContext = createContext();
 const AppContextProvider = ({children}) => {
     const navigate = useNavigate();
     const [user,setUser] = useState(null);
     const [owner,setOwner] = useState(null);
-    
-    const value = {navigate,user,setUser,owner,setOwner,axios};
+    const [loading, setLoading] = useState(true);
+    useEffect(() => {
+        checkAuth();
+    }, []);
+
+    const checkAuth = () => {
+        try {
+            const storedUser = localStorage.getItem('user');
+            if (storedUser) {
+                const userData = JSON.parse(storedUser);
+                setUser(userData);
+                setOwner(userData.role === 'owner');
+            }
+        } catch (error) {
+            console.log('Auth check error:', error);
+            localStorage.removeItem('user');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const logout = async () => {
+        try {
+            await axios.post('/api/user/logout');
+        } catch (error) {
+            console.log('Logout error:', error);
+        } finally {
+            setUser(null);
+            setOwner(false);
+            localStorage.removeItem('user');
+            navigate('/login');
+        }
+    };
+    const value = {navigate,user,setUser,owner,setOwner,axios, loading,logout,checkAuth};
     return(
         <AppContext.Provider value={value}>
             {children}

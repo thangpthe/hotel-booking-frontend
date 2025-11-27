@@ -34,17 +34,18 @@ const handleSubmit = async (e) => {
       setUser(data.user);
       localStorage.setItem("user", JSON.stringify(data.user));
       
-      if (data.user.role === "owner") {
+     if (data.user.role === "owner") {
         setOwner(true);
         navigate('/owner/dashboard');
       } else {
+        setOwner(false);
         navigate('/');
       }
     } else {
       toast.error("Email or password incorrect.");
     }
   } catch (error) {
-    console.log(error);
+    console.log("Login error:", error.response?.data || error);
     toast.error("Login failed");
   }
 }
