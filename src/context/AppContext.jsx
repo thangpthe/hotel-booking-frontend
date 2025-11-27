@@ -17,35 +17,53 @@ const AppContextProvider = ({children}) => {
     const [owner,setOwner] = useState(false);
     const [loading, setLoading] = useState(true);
     useEffect(() => {
+        const token = localStorage.getItem('token');
+        if (token) {
+            console.log('📦 Token found in localStorage');
+            axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+        }
+        
         checkAuth();
     }, []);
 
-    const checkAuth = async() => {
-       try {
+    const checkAuth = async () => {
+        try {
+            console.log('🔍 Checking authentication...');
             const { data } = await axios.get('/api/user/profile');
+            
+            console.log('✅ Profile response:', data);
             
             if (data.success && data.user) {
                 setUser(data.user);
                 setOwner(data.user.role === 'owner');
+                console.log('✅ User authenticated:', data.user.email, 'Role:', data.user.role);
             } else {
                 setUser(null);
                 setOwner(false);
             }
         } catch (error) {
-            console.log('User not logged in (Cookie missing or invalid)');
+            console.log('❌ Not authenticated:', error.response?.data?.message || error.message);
             setUser(null);
             setOwner(false);
+            
+            // Clear invalid token
+            localStorage.removeItem('token');
+            delete axios.defaults.headers.common['Authorization'];
         } finally {
             setLoading(false);
         }
-    }
+    };
 
     const logout = async () => {
-       try {
+        try {
             await axios.post('/api/user/logout');
+            console.log('✅ Logout successful');
         } catch (error) {
-            console.log('Logout error:', error);
+            console.log('❌ Logout error:', error);
         } finally {
+            // Clear token and user state
+            localStorage.removeItem('token');
+            delete axios.defaults.headers.common['Authorization'];
             setUser(null);
             setOwner(false);
             navigate('/login');

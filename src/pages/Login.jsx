@@ -1,52 +1,76 @@
 import React, { useContext, useState } from 'react';
 import "../assets/css/auth.css";
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { AppContext } from "../context/AppContext";
-
 import axios from 'axios';
 import EmailIcon from '@mui/icons-material/Email';
 import LockIcon from '@mui/icons-material/Lock';
 import toast from 'react-hot-toast';
 
 const Login = () => {
-  const navigate = useNavigate();
-  const { setUser,setOwner } = useContext(AppContext);
+  const { navigate, checkAuth } = useContext(AppContext);
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
-  }
+  };
 
-
-const handleSubmit = async (e) => {
-  e.preventDefault();
-  
-  try {
-    const { data } = await axios.post("/api/user/login", formData, {
-      withCredentials: true
-    });
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
     
-    if (data.success) {
-      toast.success("Login successful!");
-      setUser(data.user); 
+    try {
+      console.log('🔑 Attempting login...');
+      
+      const { data } = await axios.post("/api/user/login", formData);
+      
+      console.log('📥 Login response:', data);
+      
+      if (data.success) {
+        toast.success(data.message || "Login successful!");
+        
+        // ✅ Save token to localStorage
+        if (data.token) {
+          localStorage.setItem('token', data.token);
+          console.log('✅ Token saved to localStorage');
+          
+          // ✅ Set token in axios headers
+          axios.defaults.headers.common['Authorization'] = `Bearer ${data.token}`;
+          console.log('✅ Token set in axios headers');
+        }
+        
+        // ✅ Fetch user profile to update state
+        await checkAuth();
+        
+        // Navigate based on role
         if (data.user.role === "owner") {
-          setOwner(true);
+          console.log('🏨 Navigating to owner dashboard');
           navigate('/owner/dashboard');
         } else {
-          setOwner(false);
+          console.log('🏠 Navigating to home');
           navigate('/');
         }
-    } else {
-      toast.error("Email or password incorrect.");
+      } else {
+        toast.error(data.message || "Login failed");
+      }
+    } catch (error) {
+      console.error('❌ Login error:', error);
+      
+      if (error.response) {
+        toast.error(error.response.data?.message || "Login failed");
+      } else if (error.request) {
+        toast.error("No response from server");
+      } else {
+        toast.error("An error occurred");
+      }
+    } finally {
+      setLoading(false);
     }
-  } catch (error) {
-    console.log("Login error:", error.response?.data || error);
-    toast.error("Login failed");
-  }
-}
+  };
 
   return (
     <div className="auth-container">
@@ -65,6 +89,7 @@ const handleSubmit = async (e) => {
               onChange={handleChange}
               required
               placeholder="Enter your email"
+              disabled={loading}
             />
           </div>
         </div>
@@ -81,12 +106,13 @@ const handleSubmit = async (e) => {
               onChange={handleChange}
               required
               placeholder="Enter your password"
+              disabled={loading}
             />
           </div>
         </div>
 
-        <button type="submit" className="btn-primary">
-          Login
+        <button type="submit" className="btn-primary" disabled={loading}>
+          {loading ? 'Logging in...' : 'Login'}
         </button>
 
         <div className="auth-links">
@@ -97,7 +123,7 @@ const handleSubmit = async (e) => {
         </div>
       </form>
     </div>
-  )
-}
+  );
+};
 
 export default Login;
