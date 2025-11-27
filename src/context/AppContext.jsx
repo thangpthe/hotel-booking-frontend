@@ -14,37 +14,40 @@ export const AppContext = createContext();
 const AppContextProvider = ({children}) => {
     const navigate = useNavigate();
     const [user,setUser] = useState(null);
-    const [owner,setOwner] = useState(null);
+    const [owner,setOwner] = useState(false);
     const [loading, setLoading] = useState(true);
     useEffect(() => {
         checkAuth();
     }, []);
 
-    const checkAuth = () => {
-        try {
-            const storedUser = localStorage.getItem('user');
-            if (storedUser) {
-                const userData = JSON.parse(storedUser);
-                setUser(userData);
-                setOwner(userData.role === 'owner');
+    const checkAuth = async() => {
+       try {
+            const { data } = await axios.get('/api/user/profile');
+            
+            if (data.success && data.user) {
+                setUser(data.user);
+                setOwner(data.user.role === 'owner');
+            } else {
+                setUser(null);
+                setOwner(false);
             }
         } catch (error) {
-            console.log('Auth check error:', error);
-            localStorage.removeItem('user');
+            console.log('User not logged in (Cookie missing or invalid)');
+            setUser(null);
+            setOwner(false);
         } finally {
             setLoading(false);
         }
-    };
+    }
 
     const logout = async () => {
-        try {
+       try {
             await axios.post('/api/user/logout');
         } catch (error) {
             console.log('Logout error:', error);
         } finally {
             setUser(null);
             setOwner(false);
-            localStorage.removeItem('user');
             navigate('/login');
         }
     };

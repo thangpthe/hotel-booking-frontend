@@ -37,7 +37,7 @@ const AllRooms = () => {
 
   const deleteHotel = async(id) => {
     try {
-      const {data} = await axios.delete(`/api/room/delete/${id}`);
+      const {data} = await axios.delete(`/api/room/delete/${id}`,{withCredentials: true});
        if(data.success){
         toast.success(data.message);
         fetchOwnerRooms();
