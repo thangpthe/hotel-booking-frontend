@@ -132,8 +132,6 @@ const SingleRoom = () => {
       
       if (data.success) {
         setRoomData(data.room);
-        console.log("Room data:", data.room); // Debug
-        console.log("Amenities:", data.room.amenities); // Debug
       } else {
         toast.error(data.message);
       }

@@ -28,21 +28,21 @@ const AppContextProvider = ({children}) => {
 
     const checkAuth = async () => {
         try {
-            console.log('🔍 Checking authentication...');
+            // console.log('🔍 Checking authentication...');
             const { data } = await axios.get('/api/user/profile');
             
-            console.log('✅ Profile response:', data);
+            // console.log('✅ Profile response:', data);
             
             if (data.success && data.user) {
                 setUser(data.user);
                 setOwner(data.user.role === 'owner');
-                console.log('✅ User authenticated:', data.user.email, 'Role:', data.user.role);
+                // console.log('✅ User authenticated:', data.user.email, 'Role:', data.user.role);
             } else {
                 setUser(null);
                 setOwner(false);
             }
         } catch (error) {
-            console.log('❌ Not authenticated:', error.response?.data?.message || error.message);
+            console.log('Not authenticated:', error.response?.data?.message || error.message);
             setUser(null);
             setOwner(false);
             
@@ -57,9 +57,9 @@ const AppContextProvider = ({children}) => {
     const logout = async () => {
         try {
             await axios.post('/api/user/logout');
-            console.log('✅ Logout successful');
+            console.log('Logout successful');
         } catch (error) {
-            console.log('❌ Logout error:', error);
+            console.log('Logout error:', error);
         } finally {
             // Clear token and user state
             localStorage.removeItem('token');
