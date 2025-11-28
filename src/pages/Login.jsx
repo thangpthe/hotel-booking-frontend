@@ -28,19 +28,17 @@ const Login = () => {
       
       const { data } = await axios.post("/api/user/login", formData);
       
-      console.log('📥 Login response:', data);
+      // console.log('📥 Login response:', data);
       
       if (data.success) {
         toast.success(data.message || "Login successful!");
-        
-        // ✅ Save token to localStorage
         if (data.token) {
           localStorage.setItem('token', data.token);
-          console.log('✅ Token saved to localStorage');
+          // console.log('✅ Token saved to localStorage');
           
           // ✅ Set token in axios headers
           axios.defaults.headers.common['Authorization'] = `Bearer ${data.token}`;
-          console.log('✅ Token set in axios headers');
+          // console.log('✅ Token set in axios headers');
         }
         
         // ✅ Fetch user profile to update state
@@ -58,7 +56,7 @@ const Login = () => {
         toast.error(data.message || "Login failed");
       }
     } catch (error) {
-      console.error('❌ Login error:', error);
+      console.error('Login error:', error);
       
       if (error.response) {
         toast.error(error.response.data?.message || "Login failed");

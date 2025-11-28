@@ -10,10 +10,11 @@ import PeopleIcon from '@mui/icons-material/People';
 import PaymentIcon from '@mui/icons-material/Payment';
 import axios from 'axios';
 import toast from 'react-hot-toast';
+import Loading from '../components/Loading';
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 const MyBookings = () => {
   const [bookingData, setBookingData] = useState([]);
-  
+  const [isProcessing, setIsProcessing] = useState(false);
   const fetchMyBookings = async () => {
     try {
       const {data} = await axios.get("/api/bookings/user",{withCredentials:true});
@@ -31,6 +32,7 @@ const MyBookings = () => {
   }
 
   const handlePayment = async (bookingId) => {
+    setIsProcessing(true);
     try {
       const {data} = await axios.post("/api/bookings/stripe-payment",{
         bookingId,
@@ -42,6 +44,7 @@ const MyBookings = () => {
         toast.error(data.message);
       }
     } catch (error) {
+      setIsProcessing(false);
       console.log(error);     
     }
   }
@@ -70,6 +73,7 @@ const MyBookings = () => {
 
   return (
     <Box sx={{ py: 6, bgcolor: '#fafafa', minHeight: '100vh' }}>
+      {isProcessing && <Loading fullScreen={true} message="Processing secure payment..." />}
       <Container maxWidth="xl">
         
         <Typography variant="h4" fontWeight="bold" gutterBottom mb={4}>

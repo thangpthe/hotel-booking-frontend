@@ -31,7 +31,7 @@ const SignUp = () => {
     try{
       const {data} = await axios.post("/api/user/signup",formData);
       if(data.success){
-        console.log(data.message);
+        // console.log(data.message);
         navigate('/login');
       }else{
         console.error(data.message);

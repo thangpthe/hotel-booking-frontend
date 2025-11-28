@@ -4,6 +4,7 @@
 import { createContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import Loading from "../components/Loading";
 axios.defaults.withCredentials = true;
 // axios.defaults.baseURL = import.meta.env.VITE_BACKEND_URL;
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL 
@@ -71,7 +72,7 @@ const AppContextProvider = ({children}) => {
     const value = {navigate,user,setUser,owner,setOwner,axios, loading,logout,checkAuth};
     return(
         <AppContext.Provider value={value}>
-            {!loading && children}
+            {loading ? <Loading fullScreen={true} message="Loading .." /> : children}
         </AppContext.Provider>
     )
 }

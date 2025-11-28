@@ -43,6 +43,7 @@ import axios from 'axios';
 import toast from 'react-hot-toast';
 import { useState } from 'react';
 import { useEffect } from 'react';
+import Loading from '../components/Loading';
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 const SingleRoom = () => {
   const { id } = useParams();
@@ -186,11 +187,7 @@ const SingleRoom = () => {
 
   // Loading state
   if (!roomData) {
-    return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
-        <Typography variant="h5">Loading...</Typography>
-      </Box>
-    );
+      return <Loading fullScreen={false} message="Loading room details..." />;
   }
   
   return (
