@@ -1,5 +1,5 @@
 // import React, { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import {useParams } from 'react-router-dom';
 import {
   Avatar,
   Box,
@@ -44,53 +44,60 @@ import toast from 'react-hot-toast';
 import { useState } from 'react';
 import { useEffect } from 'react';
 import Loading from '../components/Loading';
+import BookingForm from '../components/BookingForm';
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 const SingleRoom = () => {
   const { id } = useParams();
-  const navigate = useNavigate();
   const [roomData, setRoomData] = useState(null);
-  const [isAvailable, setIsAvailable] = useState(false);
   const [selectedImage, setSelectedImage] = useState(0);
-  const [bookingData, setBookingData] = useState({
-    checkIn: '',
-    checkOut: '',
-    persons: 1
-  });
-  
-  const today = new Date().toISOString().split('T')[0];
+ 
 
-  const handleChange = (e) => {
-    setBookingData({...bookingData, [e.target.name]: e.target.value});
-  }
+  // const handleChange = (e) => {
+  //   setBookingData({...bookingData, [e.target.name]: e.target.value});
+  // }
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      if (!isAvailable) {
-        return checkRoomAvailability();
-      } else {
-        const {data} = await axios.post("/api/bookings/book", {
-          room: roomData._id,
-          checkInDate: bookingData.checkIn,
-          checkOutDate: bookingData.checkOut,
-          persons: bookingData.persons,
-          paymentMethod: "Pay At Hotel",
-        });
-        if (data.success) {
-          toast.success(data.message);
-          navigate("/my-bookings");
-          window.scrollTo(0, 0);
-        } else {
-          toast.error(data.message);
-        }
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  }
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   if (!bookingData.checkIn || !bookingData.checkOut) {
+  //       toast.error("Please select check-in and check-out dates");
+  //       return;
+  //   }
+    
+  //   try { 
+  //       const {data: checkData} = await axios.post("/api/bookings/check-availability", {
+  //           room: roomData._id,
+  //           checkInDate: bookingData.checkIn,
+  //           checkOutDate: bookingData.checkOut
+  //       });
+
+  //       if (!checkData.success || !checkData.isAvailable) {
+  //           toast.error("Room is not available for selected dates!");
+  //           return;
+  //       }
+
+  //       const {data} = await axios.post("/api/bookings/book", {
+  //         room: roomData._id,
+  //         checkInDate: bookingData.checkIn,
+  //         checkOutDate: bookingData.checkOut,
+  //         persons: bookingData.persons,
+  //         paymentMethod: "Pay At Hotel",
+  //       });
+
+  //       if (data.success) {
+  //         toast.success(data.message);
+  //         navigate("/my-bookings");
+  //         window.scrollTo(0, 0);
+  //       } else {
+  //         toast.error(data.message);
+  //       }
+
+  //   } catch (error) {
+  //     console.log(error);
+  //     toast.error(error.response?.data?.message || "Booking failed");
+  //   }
+  // }
 
   const getAmenityIcon = (amenity) => {
-    // Normalize amenity string - trim and lowercase for comparison
     const normalizedAmenity = amenity.trim().toLowerCase();
     
     const iconMap = {
@@ -142,39 +149,6 @@ const SingleRoom = () => {
     }
   };
 
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    fetchRoomById();
-  }, [id]);
-
-  const checkRoomAvailability = async () => {
-    try {
-      if (bookingData.checkIn >= bookingData.checkOut) {
-        toast.error('Check in date must be before check out date');
-        return;
-      }
-      const {data} = await axios.post("/api/bookings/check-availability", {
-        room: roomData._id,
-        checkInDate: bookingData.checkIn,
-        checkOutDate: bookingData.checkOut
-      });
-      if (data.success) {
-        if (data.isAvailable) {
-          setIsAvailable(true);
-          toast.success("Room is available");
-        } else {
-          setIsAvailable(false);
-          toast.error("Room is not available");
-        }
-      } else {
-        toast.error(data.message);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  }
-
-  // Helper function to parse amenities
   const getAmenitiesArray = (amenities) => {
     if (Array.isArray(amenities)) {
       return amenities;
@@ -184,6 +158,12 @@ const SingleRoom = () => {
     }
     return [];
   };
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    fetchRoomById();
+  }, [id]);
+
+
 
   // Loading state
   if (!roomData) {
@@ -379,72 +359,7 @@ const SingleRoom = () => {
                 '@media (max-width: 768px)': { width: '100%' },
                 '@media (min-width: 1024px)': { width: '33.3%' },
               }}>
-                <Box 
-                  mt={4} 
-                  mb={4} 
-                  borderRadius={4} 
-                  boxShadow={3} 
-                  p={3} 
-                  sx={{ bgcolor: 'background.paper', position: 'sticky', top: 20 }}
-                >
-                  <Typography variant="h5" fontWeight="bold" gutterBottom mb={3}>
-                    Book This Room
-                  </Typography>
-                  
-                  <form onSubmit={handleSubmit}>
-                    <Stack spacing={3}> 
-                      
-                      <TextField 
-                        label="Check in Date"
-                        type='date' 
-                        value={bookingData.checkIn} 
-                        name='checkIn' 
-                        onChange={handleChange}
-                        inputProps={{ min: today }}
-                        InputLabelProps={{ shrink: true }} 
-                        fullWidth
-                      />
-
-                      <TextField 
-                        label="Check out Date"
-                        type='date' 
-                        value={bookingData.checkOut} 
-                        name='checkOut' 
-                        inputProps={{ min: bookingData.checkIn || today }}
-                        onChange={handleChange}
-                        InputLabelProps={{ shrink: true }}
-                        fullWidth
-                      />
-
-                      <TextField 
-                        label="Number of Person"
-                        type='number' 
-                        value={bookingData.persons} 
-                        name='persons' 
-                        onChange={handleChange}
-                        InputProps={{ inputProps: { min: 1 } }}
-                        fullWidth
-                      />
-
-                      <Grid container justifyContent={'space-between'}>
-                        <Typography variant='h6'>Price</Typography>
-                        <Typography color='primary.main' variant='h6'>
-                          ${roomData.pricePerNight} /night
-                        </Typography>
-                      </Grid>
-                      
-                      <Button 
-                        variant="contained" 
-                        type="submit" 
-                        fullWidth 
-                        size="large" 
-                        sx={{ py: 1.5, fontWeight: 'bold', fontSize: '1rem' }}
-                      > 
-                        {isAvailable ? "Book Now" : "Check Availability"}
-                      </Button>
-                    </Stack>
-                  </form>
-                </Box>
+                <BookingForm room={roomData} />
               </Grid>
 
             </Grid>  
