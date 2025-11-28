@@ -56,27 +56,55 @@ function Navbar() {
     navigate('/owner/dashboard');
   };
 
+  // const handleLogout = async () => {
+  //   handleCloseUserMenu();
+  //   try {
+  //   const { data } = await axios.post("/api/user/logout", {}, {
+  //     withCredentials: true
+  //   });
+    
+  //   setUser(null);
+  //   localStorage.removeItem('user');
+  //   navigate('/');
+    
+  //   if (data.success) {
+  //     toast.success("Logged out successfully!");
+  //   }
+  // } catch (error) { 
+  //   setUser(null);
+  //   localStorage.removeItem('user');
+  //   navigate('/');
+  //   console.log(error);
+  // }
+  // };
+
   const handleLogout = async () => {
-    handleCloseUserMenu();
-    try {
+  handleCloseUserMenu();
+  try {
     const { data } = await axios.post("/api/user/logout", {}, {
       withCredentials: true
     });
     
-    setUser(null);
+    localStorage.removeItem('token');
     localStorage.removeItem('user');
+    delete axios.defaults.headers.common['Authorization'];
+    
+    setUser(null);
     navigate('/');
     
     if (data.success) {
       toast.success("Logged out successfully!");
     }
   } catch (error) { 
-    setUser(null);
+    localStorage.removeItem('token');
     localStorage.removeItem('user');
+    delete axios.defaults.headers.common['Authorization'];
+    
+    setUser(null);
     navigate('/');
     console.log(error);
   }
-  };
+};
 
   return (
     <AppBar position="static">
