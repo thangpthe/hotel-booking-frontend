@@ -86,6 +86,7 @@ const App = () => {
             <Route path="add-room" element={<OwnerRoute><AddRoom/></OwnerRoute>} />
             <Route path="bookings" element={<OwnerRoute><Bookings/></OwnerRoute>} />
             <Route path="edit-hotel/:id" element={<OwnerRoute><EditHotel/></OwnerRoute>} />
+             <Route path="edit-room/:id" element={<EditRoom />} />
         </Route>
 
       </Routes>
