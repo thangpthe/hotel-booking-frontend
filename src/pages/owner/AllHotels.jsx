@@ -157,6 +157,16 @@ const AllHotels = () => {
                       <DeleteIcon />
                     </IconButton>
                   </Tooltip>
+
+                  <Tooltip title="Edit">
+                    <IconButton 
+                      color="primary" 
+                      size="small"
+                      onClick={() => navigate(`/owner/edit-hotel/${hotel._id}`)} 
+                    >
+                      <EditIcon />
+                    </IconButton>
+                  </Tooltip>
                 </Stack>
               </TableCell>
 

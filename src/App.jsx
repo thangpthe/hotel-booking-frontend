@@ -78,13 +78,13 @@ const App = () => {
 
       
         <Route path="/owner" element={<OwnerLayout/>}>
-             <Route index path="dashboard"  element={<OwnerRoute><AllHotels/></OwnerRoute>} />
-             <Route path="hotels" element={<OwnerRoute><AllHotels/></OwnerRoute>} />
-             <Route path="register-hotel" element={<OwnerRoute><RegisterHotel/></OwnerRoute>} />
-             <Route path="rooms" element={<OwnerRoute><AllRooms/></OwnerRoute>} />
-             <Route path="add-room" element={<OwnerRoute><AddRoom/></OwnerRoute>} />
-             <Route path="bookings" element={<OwnerRoute><Bookings/></OwnerRoute>} />
-            
+            <Route index path="dashboard"  element={<OwnerRoute><AllHotels/></OwnerRoute>} />
+            <Route path="hotels" element={<OwnerRoute><AllHotels/></OwnerRoute>} />
+            <Route path="register-hotel" element={<OwnerRoute><RegisterHotel/></OwnerRoute>} />
+            <Route path="rooms" element={<OwnerRoute><AllRooms/></OwnerRoute>} />
+            <Route path="add-room" element={<OwnerRoute><AddRoom/></OwnerRoute>} />
+            <Route path="bookings" element={<OwnerRoute><Bookings/></OwnerRoute>} />
+            <Route path="edit-hotel/:id" element={<OwnerRoute><EditHotel/></OwnerRoute>} />
         </Route>
 
       </Routes>
