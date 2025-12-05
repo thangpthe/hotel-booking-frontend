@@ -1,4 +1,3 @@
-// pages/owner/EditRoom.jsx
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
@@ -17,21 +16,26 @@ import {
   Chip,
   IconButton,
   FormControlLabel,
-  Switch
+  Switch,
+  OutlinedInput
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import axios from 'axios';
 import toast from 'react-hot-toast';
-import { AppContext } from '../../context/AppContext';
 import Loading from '../../components/Loading';
 
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
+const AMENITIES_LIST = [
+  'WiFi', 'Pool', 'Spa', 'Gym', 'Restaurant', 'Bar', 
+  'Parking', 'Room Service', 'Beach Access', 'Conference Room',
+  'Air Conditioning', 'Pet Friendly', 'Smart TV', 'Balcony'
+];
+
 const EditRoom = () => {
   const { id: roomId } = useParams();
   const navigate = useNavigate();
-//   const { user } = useContext(AppContext);
   
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
@@ -45,55 +49,54 @@ const EditRoom = () => {
     hotel: '',
     pricePerNight: '',
     description: '',
-    amenities: '',
+    amenities: [],
     isAvailable: true
   });
 
-  // Fetch room data
   useEffect(() => {
-    const fetchRoomData = async () => {
+    const fetchData = async () => {
       try {
         setLoading(true);
         
-        // Fetch room details
-        const { data: roomData } = await axios.get(`/api/room/${roomId}`);
+        const { data: roomRes } = await axios.get(`/api/room/${roomId}`);
         
-        if (roomData.success) {
-          const room = roomData.room;
+        if (roomRes.success) {
+          const room = roomRes.room;
           
           setFormData({
             roomType: room.roomType || '',
             hotel: room.hotel?._id || '',
             pricePerNight: room.pricePerNight || '',
             description: room.description || '',
-            amenities: Array.isArray(room.amenities) 
-              ? room.amenities.join(', ') 
-              : room.amenities || '',
+            amenities: room.amenities ? room.amenities.split(',') : [],
             isAvailable: room.isAvailable ?? true
           });
           
           setExistingImages(room.images || []);
+        } else {
+          toast.error("Room not found");
+          navigate('/owner/dashboard');
+          return;
         }
         
-        // Fetch owner's hotels
-        const { data: hotelsData } = await axios.get('/api/hotel/owner', {
+        const { data: hotelRes } = await axios.get('/api/hotel/get', {
           withCredentials: true
         });
         
-        if (hotelsData.success) {
-          setHotels(hotelsData.hotels);
+        if (hotelRes.success) {
+          setHotels(hotelRes.hotels);
         }
         
       } catch (error) {
-        console.error('Error fetching data:', error);
-        toast.error('Failed to load room data');
+        console.error(error);
+        toast.error('Failed to load data');
         navigate('/owner/dashboard');
       } finally {
         setLoading(false);
       }
     };
 
-    fetchRoomData();
+    fetchData();
   }, [roomId, navigate]);
 
   const handleChange = (e) => {
@@ -101,6 +104,14 @@ const EditRoom = () => {
     setFormData({
       ...formData,
       [name]: type === 'checkbox' ? checked : value
+    });
+  };
+
+  const handleAmenitiesChange = (event) => {
+    const { target: { value } } = event;
+    setFormData({
+      ...formData,
+      amenities: typeof value === 'string' ? value.split(',') : value,
     });
   };
 
@@ -114,7 +125,6 @@ const EditRoom = () => {
     
     setNewImages(prev => [...prev, ...files]);
     
-    // Create previews
     const previews = files.map(file => URL.createObjectURL(file));
     setNewImagePreviews(prev => [...prev, ...previews]);
   };
@@ -126,7 +136,6 @@ const EditRoom = () => {
   const removeNewImage = (index) => {
     setNewImages(prev => prev.filter((_, i) => i !== index));
     setNewImagePreviews(prev => {
-      // Revoke object URL to prevent memory leak
       URL.revokeObjectURL(prev[index]);
       return prev.filter((_, i) => i !== index);
     });
@@ -148,45 +157,45 @@ const EditRoom = () => {
       formDataToSend.append('hotel', formData.hotel);
       formDataToSend.append('pricePerNight', formData.pricePerNight);
       formDataToSend.append('description', formData.description);
-      formDataToSend.append('amenities', formData.amenities);
       formDataToSend.append('isAvailable', formData.isAvailable);
+      
+      const amenitiesString = Array.isArray(formData.amenities) 
+          ? formData.amenities.join(',') 
+          : formData.amenities;
+      formDataToSend.append('amenities', amenitiesString);
+
       formDataToSend.append('keepExistingImages', JSON.stringify(existingImages));
-      // Add new images
+      
       newImages.forEach((image) => {
         formDataToSend.append('images', image);
       });
-      
-      
-      console.log('📤 Submitting update...');
       
       const { data } = await axios.put(
         `/api/room/update/${roomId}`,
         formDataToSend,
         {
-          headers: {
-            'Content-Type': 'multipart/form-data'
-          },
+          headers: { 'Content-Type': 'multipart/form-data' },
           withCredentials: true
         }
       );
       
       if (data.success) {
         toast.success('Room updated successfully!');
-        navigate('/owner/dashboard');
+        navigate('/owner/rooms');
       } else {
         toast.error(data.message || 'Update failed');
       }
       
     } catch (error) {
-      console.error('Update error:', error);
-      toast.error(error.response?.data?.message || 'Failed to update room');
+      console.error(error);
+      toast.error('Failed to update room');
     } finally {
       setSubmitting(false);
     }
   };
 
   if (loading) {
-    return <Loading fullScreen={true} message="Loading room data..." />;
+    return <Loading fullScreen={true} />;
   }
 
   return (
@@ -201,7 +210,6 @@ const EditRoom = () => {
           <form onSubmit={handleSubmit}>
             <Grid container spacing={3}>
               
-              {/* Hotel Selection */}
               <Grid item xs={12} md={6}>
                 <FormControl fullWidth required>
                   <InputLabel>Select Hotel</InputLabel>
@@ -220,7 +228,6 @@ const EditRoom = () => {
                 </FormControl>
               </Grid>
 
-              {/* Room Type */}
               <Grid item xs={12} md={6}>
                 <TextField
                   fullWidth
@@ -229,11 +236,9 @@ const EditRoom = () => {
                   name="roomType"
                   value={formData.roomType}
                   onChange={handleChange}
-                  placeholder="e.g., Deluxe Suite, Standard Room"
                 />
               </Grid>
 
-              {/* Price */}
               <Grid item xs={12} md={6}>
                 <TextField
                   fullWidth
@@ -243,11 +248,10 @@ const EditRoom = () => {
                   name="pricePerNight"
                   value={formData.pricePerNight}
                   onChange={handleChange}
-                  inputProps={{ min: 0, step: 0.01 }}
+                  inputProps={{ min: 0 }}
                 />
               </Grid>
 
-              {/* Availability */}
               <Grid item xs={12} md={6}>
                 <FormControlLabel
                   control={
@@ -259,10 +263,10 @@ const EditRoom = () => {
                     />
                   }
                   label="Room Available"
+                  sx={{ mt: 1 }}
                 />
               </Grid>
 
-              {/* Description */}
               <Grid item xs={12}>
                 <TextField
                   fullWidth
@@ -273,30 +277,37 @@ const EditRoom = () => {
                   name="description"
                   value={formData.description}
                   onChange={handleChange}
-                  placeholder="Describe the room features, view, size, etc."
                 />
               </Grid>
 
-              {/* Amenities */}
               <Grid item xs={12}>
-                <TextField
-                  fullWidth
-                  required
-                  label="Amenities"
-                  name="amenities"
-                  value={formData.amenities}
-                  onChange={handleChange}
-                  placeholder="e.g., WiFi, TV, Mini Bar, Balcony (comma-separated)"
-                  helperText="Separate amenities with commas"
-                />
+                <FormControl fullWidth>
+                  <InputLabel>Amenities</InputLabel>
+                  <Select
+                    multiple
+                    value={formData.amenities}
+                    onChange={handleAmenitiesChange}
+                    input={<OutlinedInput label="Amenities" />}
+                    renderValue={(selected) => (
+                      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                        {selected.map((value) => (
+                          <Chip key={value} label={value} size="small" />
+                        ))}
+                      </Box>
+                    )}
+                  >
+                    {AMENITIES_LIST.map((name) => (
+                      <MenuItem key={name} value={name}>
+                        {name}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
               </Grid>
 
-              {/* Existing Images */}
               {existingImages.length > 0 && (
                 <Grid item xs={12}>
-                  <Typography variant="h6" gutterBottom>
-                    Current Images
-                  </Typography>
+                  <Typography variant="h6" gutterBottom>Current Images</Typography>
                   <Stack direction="row" spacing={2} flexWrap="wrap" useFlexGap>
                     {existingImages.map((img, index) => (
                       <Box
@@ -312,21 +323,15 @@ const EditRoom = () => {
                       >
                         <img
                           src={`${backendUrl}/images/${img}`}
-                          alt={`Room ${index + 1}`}
-                          style={{
-                            width: '100%',
-                            height: '100%',
-                            objectFit: 'cover'
-                          }}
+                          alt={`Room ${index}`}
+                          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                         />
                         <IconButton
                           size="small"
                           sx={{
-                            position: 'absolute',
-                            top: 5,
-                            right: 5,
+                            position: 'absolute', top: 5, right: 5,
                             bgcolor: 'rgba(255,255,255,0.9)',
-                            '&:hover': { bgcolor: 'rgba(255,255,255,1)' }
+                            '&:hover': { bgcolor: 'white' }
                           }}
                           onClick={() => removeExistingImage(index)}
                         >
@@ -338,92 +343,71 @@ const EditRoom = () => {
                 </Grid>
               )}
 
-              {/* New Image Upload */}
               <Grid item xs={12}>
-                <Box>
-                  <Typography variant="h6" gutterBottom>
-                    Upload New Images
-                  </Typography>
-                  
-                  <Button
-                    variant="outlined"
-                    component="label"
-                    startIcon={<CloudUploadIcon />}
-                    sx={{ mb: 2 }}
-                  >
-                    Choose Images
-                    <input
-                      type="file"
-                      hidden
-                      multiple
-                      accept="image/*"
-                      onChange={handleImageChange}
-                    />
-                  </Button>
+                <Typography variant="h6" gutterBottom>Upload New Images</Typography>
+                <Button
+                  variant="outlined"
+                  component="label"
+                  startIcon={<CloudUploadIcon />}
+                  sx={{ mb: 2 }}
+                >
+                  Choose Images
+                  <input
+                    type="file"
+                    hidden
+                    multiple
+                    accept="image/*"
+                    onChange={handleImageChange}
+                  />
+                </Button>
 
-                  {newImagePreviews.length > 0 && (
-                    <Stack direction="row" spacing={2} flexWrap="wrap" useFlexGap mt={2}>
-                      {newImagePreviews.map((preview, index) => (
-                        <Box
-                          key={index}
+                {newImagePreviews.length > 0 && (
+                  <Stack direction="row" spacing={2} flexWrap="wrap" useFlexGap mt={2}>
+                    {newImagePreviews.map((preview, index) => (
+                      <Box
+                        key={index}
+                        sx={{
+                          position: 'relative',
+                          width: 150,
+                          height: 150,
+                          borderRadius: 2,
+                          overflow: 'hidden',
+                          border: '2px solid #2196f3'
+                        }}
+                      >
+                        <img
+                          src={preview}
+                          alt={`New ${index}`}
+                          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                        />
+                        <Chip
+                          label="NEW"
+                          size="small"
+                          color="primary"
+                          sx={{ position: 'absolute', bottom: 5, left: 5 }}
+                        />
+                        <IconButton
+                          size="small"
                           sx={{
-                            position: 'relative',
-                            width: 150,
-                            height: 150,
-                            borderRadius: 2,
-                            overflow: 'hidden',
-                            border: '2px solid #2196f3'
+                            position: 'absolute', top: 5, right: 5,
+                            bgcolor: 'rgba(255,255,255,0.9)',
+                            '&:hover': { bgcolor: 'white' }
                           }}
+                          onClick={() => removeNewImage(index)}
                         >
-                          <img
-                            src={preview}
-                            alt={`New ${index + 1}`}
-                            style={{
-                              width: '100%',
-                              height: '100%',
-                              objectFit: 'cover'
-                            }}
-                          />
-                          <Chip
-                            label="NEW"
-                            size="small"
-                            color="primary"
-                            sx={{
-                              position: 'absolute',
-                              bottom: 5,
-                              left: 5
-                            }}
-                          />
-                          <IconButton
-                            size="small"
-                            sx={{
-                              position: 'absolute',
-                              top: 5,
-                              right: 5,
-                              bgcolor: 'rgba(255,255,255,0.9)',
-                              '&:hover': { bgcolor: 'rgba(255,255,255,1)' }
-                            }}
-                            onClick={() => removeNewImage(index)}
-                          >
-                            <CloseIcon fontSize="small" />
-                          </IconButton>
-                        </Box>
-                      ))}
-                    </Stack>
-                  )}
-                  
-                  <Typography variant="caption" color="text.secondary" display="block" mt={1}>
-                    Total images: {existingImages.length + newImages.length} / 10
-                  </Typography>
-                </Box>
+                          <CloseIcon fontSize="small" />
+                        </IconButton>
+                      </Box>
+                    ))}
+                  </Stack>
+                )}
               </Grid>
 
-              {/* Submit Buttons */}
               <Grid item xs={12}>
                 <Stack direction="row" spacing={2} justifyContent="flex-end">
                   <Button
                     variant="outlined"
-                    onClick={() => navigate('/owner/dashboard')}
+                    onClick={() => navigate('/owner/rooms')}
                     disabled={submitting}
                   >
                     Cancel
@@ -440,7 +424,6 @@ const EditRoom = () => {
 
             </Grid>
           </form>
-
         </Paper>
       </Container>
     </Box>
