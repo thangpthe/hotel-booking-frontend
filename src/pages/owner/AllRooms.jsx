@@ -155,7 +155,7 @@ const AllRooms = () => {
               
               <TableCell>
                 <Stack direction="row">
-                  <Tooltip title="Edit" onClick={() => navigate(`/edit-room/${room._id}`)}>
+                  <Tooltip title="Edit" onClick={() => navigate(`/owner/edit-room/${room._id}`)}>
                     <IconButton color="primary" size="small">
                       <EditIcon />
                     </IconButton>
