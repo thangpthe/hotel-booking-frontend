@@ -29,6 +29,7 @@ import OwnerRoute from "./components/OwnerRoute";
 import Loader from "./components/Loader";
 import SingleHotel from "./pages/SingleHotel";
 import EditHotel from "./pages/owner/EditHotel";
+import EditRoom from "./pages/owner/EditRoom";
 
 // --- LAYOUTS ---
 const MainLayout = () => {
@@ -86,7 +87,7 @@ const App = () => {
             <Route path="add-room" element={<OwnerRoute><AddRoom/></OwnerRoute>} />
             <Route path="bookings" element={<OwnerRoute><Bookings/></OwnerRoute>} />
             <Route path="edit-hotel/:id" element={<OwnerRoute><EditHotel/></OwnerRoute>} />
-             <Route path="edit-room/:id" element={<EditRoom />} />
+             <Route path="edit-room/:id" element={<OwnerRoute><EditRoom/></OwnerRoute>} />
         </Route>
 
       </Routes>
