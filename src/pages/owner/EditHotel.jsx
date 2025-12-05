@@ -46,7 +46,6 @@ const EditHotel = () => {
                 hotelAddress: hotel.hotelAddress,
                 rating: Number(hotel.rating),
                 price: hotel.price,
-                // Chuyển chuỗi "WiFi,Pool" thành mảng ["WiFi", "Pool"] để hiển thị
                 amenities: hotel.amenities ? hotel.amenities.split(',') : [], 
             });
             // Hiển thị ảnh cũ
@@ -64,7 +63,6 @@ const EditHotel = () => {
     fetchHotelData();
   }, [id, backendUrl]);
 
-  // --- HANDLERS ---
   const handleChange = (e) => {
     setData({ ...data, [e.target.name]: e.target.value });
   };
@@ -97,7 +95,6 @@ const EditHotel = () => {
     formData.append("hotelAddress", data.hotelAddress);
     formData.append("rating", data.rating);
     formData.append("price", data.price);
-    // Chuyển mảng về chuỗi để gửi lên server (Backend bạn lưu String)
     formData.append("amenities", data.amenities.join(','));
     
     if (imageFile) {
@@ -112,12 +109,12 @@ const EditHotel = () => {
 
       if (res.success) {
          toast.success('Hotel updated successfully!');
-         navigate('/owner/hotels'); // Quay về danh sách
+         navigate('/owner/hotels');
       } else {
         toast.error(res.message);
       }
     } catch (error) {
-      toast.error("Update failed");
+    //   toast.error("Update failed");
       console.log(error);
     }
   }
