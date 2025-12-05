@@ -35,7 +35,7 @@ const AllRooms = () => {
     fetchOwnerRooms();
   },[]);
 
-  const deleteHotel = async(id) => {
+  const deleteRoom = async(id) => {
     try {
       const {data} = await axios.delete(`/api/room/delete/${id}`,{withCredentials: true});
        if(data.success){
@@ -155,12 +155,12 @@ const AllRooms = () => {
               
               <TableCell>
                 <Stack direction="row">
-                  <Tooltip title="Edit">
+                  <Tooltip title="Edit" onClick={() => navigate(`/edit-room/${room._id}`)}>
                     <IconButton color="primary" size="small">
                       <EditIcon />
                     </IconButton>
                   </Tooltip>
-                  <Tooltip title="Delete" onClick={() => deleteHotel(room._id)}>
+                  <Tooltip title="Delete" onClick={() => deleteRoom(room._id)}>
                     <IconButton color="error" size="small">
                       <DeleteIcon />
                     </IconButton>
