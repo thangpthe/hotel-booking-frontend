@@ -48,7 +48,6 @@ const EditHotel = () => {
                 price: hotel.price,
                 amenities: hotel.amenities ? hotel.amenities.split(',') : [], 
             });
-            // Hiển thị ảnh cũ
             setImagePreview(`${backendUrl}/images/${hotel.image}`);
         } else {
             toast.error(res.message);

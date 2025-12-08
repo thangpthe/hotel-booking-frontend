@@ -362,7 +362,7 @@ const MyBookings = () => {
 
   const fetchMyBookings = async () => {
     try {
-      const { data } = await axios.get("/api/bookings/user");
+      const { data } = await axios.get("/api/bookings/user",{withCredentials:true});
       
       if (data.success) {
         setBookingData(data.bookings);
