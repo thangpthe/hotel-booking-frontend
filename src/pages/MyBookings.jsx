@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 // // /* eslint-disable react-hooks/immutability */
 // // /* eslint-disable react-hooks/set-state-in-effect */
 // // import React, { useEffect, useState } from 'react';
@@ -724,9 +725,6 @@ const MyBookings = () => {
       
       const { data } = await axios.get(`/api/bookings/user?_t=${timestamp}`, {
         withCredentials: true,
-        headers: {
-          'Cache-Control': 'no-cache'
-        }
       });
       
       if (data.success) {
