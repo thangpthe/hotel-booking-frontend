@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 // MyBookings.jsx - Complete safe version
 
 import React, { useEffect, useState } from 'react';
@@ -36,9 +37,6 @@ const MyBookings = () => {
       
       const { data } = await axios.get(`/api/bookings/user?_t=${timestamp}`, {
         withCredentials: true,
-        headers: {
-          'Cache-Control': 'no-cache'
-        }
       });
       
       if (data.success) {
@@ -46,7 +44,7 @@ const MyBookings = () => {
         const validBookings = (data.bookings || []).filter(booking => {
           const isValid = booking && booking.hotel && booking.room;
           if (!isValid) {
-            console.warn("⚠️ Invalid booking filtered out:", booking?._id);
+            console.warn("Invalid booking filtered out:", booking?._id);
           }
           return isValid;
         });
