@@ -1069,14 +1069,13 @@ import React, { useEffect, useState } from 'react';
 import { 
   Box, Container, Typography, Card, CardMedia, Grid, Chip, Stack, Button, 
   Dialog, DialogTitle, DialogContent, DialogActions, TextField, CircularProgress,
-  DialogContentText // ← Add this
+  DialogContentText
 } from '@mui/material';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
-import LocationOnIcon from '@mui/icons-material/LocationOn';
 import PeopleIcon from '@mui/icons-material/People';
 import EditIcon from '@mui/icons-material/Edit';
 import CancelIcon from '@mui/icons-material/Cancel';
-import WarningAmberIcon from '@mui/icons-material/WarningAmber'; // ← Add this
+import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 
@@ -1087,7 +1086,6 @@ const MyBookings = () => {
   const [loading, setLoading] = useState(true);
   const [isProcessing, setIsProcessing] = useState(false);
   
-  // Edit Dialog
   const [editDialog, setEditDialog] = useState(false);
   const [selectedBooking, setSelectedBooking] = useState(null);
   const [editForm, setEditForm] = useState({
@@ -1096,7 +1094,6 @@ const MyBookings = () => {
     persons: 1
   });
 
-  // ✅ Cancel Confirm Dialog State
   const [cancelDialog, setCancelDialog] = useState(false);
   const [bookingToCancel, setBookingToCancel] = useState(null);
 
@@ -1112,24 +1109,14 @@ const MyBookings = () => {
       });
       
       if (data.success) {
-        const validBookings = (data.bookings || []).filter(booking => {
-          const isValid = booking && booking.hotel && booking.room;
-          if (!isValid) {
-            console.warn("Invalid booking filtered out:", booking?._id);
-          }
-          return isValid;
-        });
-        
+        const validBookings = (data.bookings || []).filter(booking => 
+          booking && booking.hotel && booking.room
+        );
         setBookingData(validBookings);
-        
-        if (validBookings.length === 0 && data.bookings?.length > 0) {
-          toast.error("Your bookings have missing data. Please contact support.");
-        }
       } else {
         toast.error(data.message);
       }
     } catch (error) {
-      console.error('Fetch error:', error);
       if (error.response?.status === 401) {
         toast.error("Please login to view bookings");
       } else {
@@ -1184,15 +1171,7 @@ const MyBookings = () => {
       if (data.success) {
         toast.success("Booking updated successfully!");
         setEditDialog(false);
-        
-        // ✅ Update state immediately instead of fetching
-        setBookingData(prevBookings => 
-          prevBookings.map(booking => 
-            booking._id === selectedBooking._id 
-              ? { ...booking, ...data.booking }
-              : booking
-          )
-        );
+        fetchMyBookings();
       } else {
         toast.error(data.message);
       }
@@ -1201,13 +1180,11 @@ const MyBookings = () => {
     }
   };
 
-  // ✅ Open Cancel Confirmation Dialog
   const handleCancelClick = (booking) => {
     setBookingToCancel(booking);
     setCancelDialog(true);
   };
 
-  // ✅ Confirm Cancel Booking
   const handleConfirmCancel = async () => {
     if (!bookingToCancel) return;
 
@@ -1218,13 +1195,7 @@ const MyBookings = () => {
 
       if (data.success) {
         toast.success("Booking cancelled successfully");
-        
-        // ✅ Remove booking from state immediately
-        setBookingData(prevBookings => 
-          prevBookings.filter(booking => booking._id !== bookingToCancel._id)
-        );
-        
-        // Close dialog
+        setBookingData(prev => prev.filter(b => b._id !== bookingToCancel._id));
         setCancelDialog(false);
         setBookingToCancel(null);
       } else {
@@ -1233,12 +1204,6 @@ const MyBookings = () => {
     } catch (error) {
       toast.error(error.response?.data?.message || "Failed to cancel booking");
     }
-  };
-
-  // ✅ Close Cancel Dialog
-  const handleCancelDialogClose = () => {
-    setCancelDialog(false);
-    setBookingToCancel(null);
   };
 
   useEffect(() => {
@@ -1259,8 +1224,7 @@ const MyBookings = () => {
     if (!dateString) return "N/A";
     try {
       const date = new Date(dateString);
-      const options = { weekday: 'short', month: 'short', day: 'numeric' };
-      return date.toLocaleDateString('en-US', options);
+      return date.toLocaleDateString('en-GB');
     } catch (e) {
       return "Invalid date";
     }
@@ -1268,27 +1232,20 @@ const MyBookings = () => {
 
   const canEditBooking = (booking) => {
     if (!booking) return false;
-    const now = new Date();
-    const checkIn = new Date(booking.checkIn);
-    const hoursDiff = (checkIn - now) / (1000 * 60 * 60);
-    
-    return !booking.isPaid && 
-           booking.status?.toLowerCase() !== 'cancelled' && 
-           hoursDiff > 24;
+    return !booking.isPaid && booking.status?.toLowerCase() !== 'cancelled';
   };
 
   const canCancelBooking = (booking) => {
     if (!booking) return false;
+    if (booking.status?.toLowerCase() === 'cancelled') return false;
+    if (!booking.isPaid) return true;
+
     const now = new Date();
     const checkIn = new Date(booking.checkIn);
-    const checkOut = new Date(booking.checkOut);
-    
-    if (now >= checkIn && now < checkOut) return false;
+    if (now >= checkIn) return false;
     
     const hoursDiff = (checkIn - now) / (1000 * 60 * 60);
-    if (hoursDiff < 24 && hoursDiff > 0) return false;
-    
-    return booking.status?.toLowerCase() !== 'cancelled';
+    return hoursDiff >= 24;
   };
 
   if (loading) {
@@ -1316,109 +1273,108 @@ const MyBookings = () => {
         </Typography>
 
         <Stack spacing={2}>
-          {bookingData.map((booking) => {
-            if (!booking?.hotel || !booking?.room) return null;
-            
-            return (
-              <Card key={booking._id} sx={{ boxShadow: 2 }}>
-                <Box sx={{ p: 3 }}>
-                  <Grid container spacing={3} alignItems="center">
-                    
-                    <Grid item xs={12} md={4}>
-                      <Stack direction="row" spacing={2} alignItems="center">
-                        <CardMedia
-                          component="img"
-                          sx={{ width: 80, height: 80, borderRadius: 2, objectFit: 'cover' }}
-                          image={`${backendUrl}/images/${booking.room.images?.[0] || 'default.jpg'}`} 
-                          alt={booking.hotel.hotelName}
-                          onError={(e) => e.target.src = 'https://via.placeholder.com/80'}
-                        />
-                        
-                        <Box>
-                          <Typography variant="h6" fontWeight="bold">
-                            {booking.hotel.hotelName}
-                          </Typography>
-                          <Typography variant="body2" color="primary">
-                            {booking.room.roomType}
-                          </Typography>
-                          <Stack direction="row" alignItems="center" spacing={0.5} mt={0.5}>
-                            <PeopleIcon sx={{ fontSize: 14 }} />
-                            <Typography variant="caption">
-                              {booking.persons} Guest{booking.persons > 1 ? 's' : ''}
-                            </Typography>
-                          </Stack>
-                        </Box>
-                      </Stack>
-                    </Grid>
-
-                    <Grid item xs={12} md={3}>
-                      <Stack spacing={1}>
-                        <Box>
-                          <Typography variant="caption" color="text.secondary">Check-in</Typography>
-                          <Typography variant="body2" fontWeight="600">{formatDate(booking.checkIn)}</Typography>
-                        </Box>
-                        <Box>
-                          <Typography variant="caption" color="text.secondary">Check-out</Typography>
-                          <Typography variant="body2" fontWeight="600">{formatDate(booking.checkOut)}</Typography>
-                        </Box>
-                      </Stack>
-                    </Grid>
-
-                    <Grid item xs={12} md={2}>
-                      <Typography variant="h5" fontWeight="bold">${booking.totalPrice}</Typography>
-                      <Chip 
-                        label={booking.status?.charAt(0).toUpperCase() + booking.status?.slice(1)} 
-                        color={getStatusColor(booking.status)}
-                        size="small"
+          {bookingData.map((booking) => (
+            <Card key={booking._id} sx={{ boxShadow: 2, borderRadius: 3 }}>
+              <Box sx={{ p: 3 }}>
+                <Grid container spacing={3} alignItems="center">
+                  
+                  <Grid item xs={12} md={4}>
+                    <Stack direction="row" spacing={2} alignItems="center">
+                      <CardMedia
+                        component="img"
+                        sx={{ width: 90, height: 90, borderRadius: 2, objectFit: 'cover' }}
+                        image={`${backendUrl}/images/${booking.room.images?.[0] || 'default.jpg'}`} 
+                        alt={booking.hotel.hotelName}
+                        onError={(e) => e.target.src = 'https://via.placeholder.com/90'}
                       />
-                    </Grid>
-
-                    <Grid item xs={12} md={3}>
-                      <Stack spacing={1}>
-                        {!booking.isPaid && booking.status?.toLowerCase() !== 'cancelled' && (
-                          <Button 
-                            variant="contained" 
-                            size="small"
-                            fullWidth
-                            onClick={() => handlePayment(booking._id)}
-                            sx={{ bgcolor: '#ef4444', '&:hover': { bgcolor: '#dc2626' } }}
-                          >
-                            Pay Now
-                          </Button>
-                        )}
-                        
-                        {canEditBooking(booking) && (
-                          <Button 
-                            variant="outlined" 
-                            size="small"
-                            fullWidth
-                            startIcon={<EditIcon />}
-                            onClick={() => handleEditClick(booking)}
-                          >
-                            Edit
-                          </Button>
-                        )}
-                        
-                        {canCancelBooking(booking) && (
-                          <Button 
-                            variant="outlined" 
-                            size="small"
-                            fullWidth
-                            color="error"
-                            startIcon={<CancelIcon />}
-                            onClick={() => handleCancelClick(booking)}
-                          >
-                            Cancel
-                          </Button>
-                        )}
-                      </Stack>
-                    </Grid>
-
+                      
+                      <Box>
+                        <Typography variant="h6" fontWeight="bold" lineHeight={1.2} mb={0.5}>
+                          {booking.hotel.hotelName}
+                        </Typography>
+                        <Typography variant="body2" color="primary" fontWeight={500}>
+                          {booking.room.roomType}
+                        </Typography>
+                        <Stack direction="row" alignItems="center" spacing={0.5} mt={0.5}>
+                          <PeopleIcon sx={{ fontSize: 16, color: 'text.secondary' }} />
+                          <Typography variant="caption" color="text.secondary">
+                            {booking.persons} Guest{booking.persons > 1 ? 's' : ''}
+                          </Typography>
+                        </Stack>
+                      </Box>
+                    </Stack>
                   </Grid>
-                </Box>
-              </Card>
-            );
-          })}
+
+                  <Grid item xs={12} md={3}>
+                    <Stack spacing={1}>
+                      <Box>
+                        <Typography variant="caption" color="text.secondary">Check-in</Typography>
+                        <Typography variant="body2" fontWeight="600">{formatDate(booking.checkIn)}</Typography>
+                      </Box>
+                      <Box>
+                        <Typography variant="caption" color="text.secondary">Check-out</Typography>
+                        <Typography variant="body2" fontWeight="600">{formatDate(booking.checkOut)}</Typography>
+                      </Box>
+                    </Stack>
+                  </Grid>
+
+                  <Grid item xs={12} md={2}>
+                    <Typography variant="h5" fontWeight="bold" color="primary.main" mb={1}>
+                      ${booking.totalPrice}
+                    </Typography>
+                    <Chip 
+                      label={booking.status?.toUpperCase()} 
+                      color={getStatusColor(booking.status)}
+                      size="small"
+                      sx={{ fontWeight: 'bold', minWidth: '80px' }}
+                    />
+                  </Grid>
+
+                  <Grid item xs={12} md={3}>
+                    <Stack spacing={1}>
+                      {!booking.isPaid && booking.status?.toLowerCase() !== 'cancelled' && (
+                        <Button 
+                          variant="contained" 
+                          size="small"
+                          fullWidth
+                          onClick={() => handlePayment(booking._id)}
+                          sx={{ bgcolor: '#ef4444', '&:hover': { bgcolor: '#dc2626' } }}
+                        >
+                          Pay Now
+                        </Button>
+                      )}
+                      
+                      {canEditBooking(booking) && (
+                        <Button 
+                          variant="outlined" 
+                          size="small"
+                          fullWidth
+                          startIcon={<EditIcon />}
+                          onClick={() => handleEditClick(booking)}
+                        >
+                          Edit
+                        </Button>
+                      )}
+                      
+                      {canCancelBooking(booking) && (
+                        <Button 
+                          variant="outlined" 
+                          size="small"
+                          fullWidth
+                          color="error"
+                          startIcon={<CancelIcon />}
+                          onClick={() => handleCancelClick(booking)}
+                        >
+                          Cancel
+                        </Button>
+                      )}
+                    </Stack>
+                  </Grid>
+
+                </Grid>
+              </Box>
+            </Card>
+          ))}
 
           {bookingData.length === 0 && (
             <Box sx={{ textAlign: 'center', py: 8, bgcolor: 'white', borderRadius: 2 }}>
@@ -1429,7 +1385,6 @@ const MyBookings = () => {
 
       </Container>
 
-      {/* ✅ Edit Dialog */}
       <Dialog open={editDialog} onClose={() => setEditDialog(false)} maxWidth="sm" fullWidth>
         <DialogTitle>Edit Booking</DialogTitle>
         <DialogContent>
@@ -1468,55 +1423,32 @@ const MyBookings = () => {
         </DialogActions>
       </Dialog>
 
-      {/* ✅ Cancel Confirmation Dialog */}
-      <Dialog 
-        open={cancelDialog} 
-        onClose={handleCancelDialogClose}
-        maxWidth="sm"
-        fullWidth
-      >
+      <Dialog open={cancelDialog} onClose={() => setCancelDialog(false)} maxWidth="sm" fullWidth>
         <DialogTitle sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
           <WarningAmberIcon color="error" />
           Cancel Booking
         </DialogTitle>
         <DialogContent>
           <DialogContentText>
-            Are you sure you want to cancel this booking?
+            Are you sure you want to cancel this booking? This action cannot be undone.
           </DialogContentText>
-          
           {bookingToCancel && (
             <Box sx={{ mt: 2, p: 2, bgcolor: '#f5f5f5', borderRadius: 2 }}>
-              <Typography variant="subtitle2" fontWeight="bold" gutterBottom>
+              <Typography variant="subtitle2" fontWeight="bold">
                 {bookingToCancel.hotel.hotelName}
               </Typography>
               <Typography variant="body2" color="text.secondary">
                 {bookingToCancel.room.roomType}
-              </Typography>
-              <Typography variant="body2" color="text.secondary" mt={1}>
-                {formatDate(bookingToCancel.checkIn)} - {formatDate(bookingToCancel.checkOut)}
               </Typography>
               <Typography variant="h6" color="primary" mt={1}>
                 ${bookingToCancel.totalPrice}
               </Typography>
             </Box>
           )}
-          
-          <Typography variant="body2" color="error" sx={{ mt: 2 }}>
-            This action cannot be undone.
-          </Typography>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCancelDialogClose} variant="outlined">
-            No, Keep It
-          </Button>
-          <Button 
-            onClick={handleConfirmCancel} 
-            variant="contained" 
-            color="error"
-            startIcon={<CancelIcon />}
-          >
-            Yes, Cancel Booking
-          </Button>
+          <Button onClick={() => setCancelDialog(false)} variant="outlined">No, Keep It</Button>
+          <Button onClick={handleConfirmCancel} variant="contained" color="error">Yes, Cancel Booking</Button>
         </DialogActions>
       </Dialog>
     </Box>
