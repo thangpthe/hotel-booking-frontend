@@ -6,9 +6,12 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Loading from "../components/common/Loading";
 axios.defaults.withCredentials = true;
-// axios.defaults.baseURL = import.meta.env.VITE_BACKEND_URL;
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
-axios.defaults.baseURL = BACKEND_URL;
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || '';
+// Chỉ set baseURL khi không phải localhost (production)
+// Khi dev local, để trống để Vite proxy /api → localhost:5000 hoạt động
+if (BACKEND_URL && !BACKEND_URL.includes('localhost')) {
+  axios.defaults.baseURL = BACKEND_URL;
+}
 export const AppContext = createContext();
 const AppContextProvider = ({children}) => {
     const navigate = useNavigate();
