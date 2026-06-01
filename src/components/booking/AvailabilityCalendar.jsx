@@ -103,7 +103,7 @@ const AvailabilityCalendar = ({ bookedRanges = [], selection, onChange }) => {
             }}
           />
           <Typography variant="caption" color="text.secondary">
-            Ngày đang chọn
+            Selected dates
           </Typography>
         </Stack>
         <Stack direction="row" alignItems="center" spacing={0.5}>
@@ -117,7 +117,7 @@ const AvailabilityCalendar = ({ bookedRanges = [], selection, onChange }) => {
             }}
           />
           <Typography variant="caption" color="text.secondary">
-            Đã có người đặt
+            Already booked
           </Typography>
         </Stack>
         <Stack direction="row" alignItems="center" spacing={0.5}>
@@ -130,7 +130,7 @@ const AvailabilityCalendar = ({ bookedRanges = [], selection, onChange }) => {
             }}
           />
           <Typography variant="caption" color="text.secondary">
-            Ngày trống
+            Available
           </Typography>
         </Stack>
       </Stack>
@@ -182,7 +182,7 @@ const AvailabilityCalendar = ({ bookedRanges = [], selection, onChange }) => {
       {bookedRanges.length > 0 && (
         <Box mt={1.5}>
           <Typography variant="caption" color="text.secondary">
-            🔒 {bookedRanges.length} khoảng thời gian đã được đặt
+            🔒 {bookedRanges.length} booked period{bookedRanges.length > 1 ? 's' : ''}
           </Typography>
         </Box>
       )}

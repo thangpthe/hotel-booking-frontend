@@ -25,10 +25,10 @@ import { formatPrice } from '../utils/priceUtils';
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
 const STATUS_TABS = [
-  { value: 'all', label: 'Tất cả', icon: null },
-  { value: 'pending', label: 'Chờ xác nhận', icon: <PendingIcon fontSize="small" /> },
-  { value: 'confirmed', label: 'Đã xác nhận', icon: <CheckCircleIcon fontSize="small" /> },
-  { value: 'cancelled', label: 'Đã hủy', icon: <BlockIcon fontSize="small" /> },
+  { value: 'all', label: 'All', icon: null },
+  { value: 'pending', label: 'Pending', icon: <PendingIcon fontSize="small" /> },
+  { value: 'confirmed', label: 'Confirmed', icon: <CheckCircleIcon fontSize="small" /> },
+  { value: 'cancelled', label: 'Cancelled', icon: <BlockIcon fontSize="small" /> },
 ];
 
 const MyBookings = () => {
@@ -58,9 +58,9 @@ const MyBookings = () => {
       }
     } catch (error) {
       if (error.response?.status === 401) {
-        toast.error("Vui lòng đăng nhập để xem đặt phòng");
+        toast.error("Please log in to view your bookings");
       } else {
-        toast.error("Không thể tải danh sách đặt phòng");
+        toast.error("Failed to load bookings");
       }
     } finally {
       setLoading(false);
@@ -82,7 +82,7 @@ const MyBookings = () => {
         toast.error(data.message);
       }
     } catch {
-      toast.error("Thanh toán thất bại");
+      toast.error("Payment failed");
     } finally {
       setIsProcessing(false);
     }
@@ -106,14 +106,14 @@ const MyBookings = () => {
         { withCredentials: true }
       );
       if (data.success) {
-        toast.success("Cập nhật đặt phòng thành công!");
+        toast.success("Booking updated successfully!");
         setEditDialog(false);
         fetchMyBookings();
       } else {
         toast.error(data.message);
       }
     } catch (error) {
-      toast.error(error.response?.data?.message || "Cập nhật thất bại");
+      toast.error(error.response?.data?.message || "Update failed");
     }
   };
 
@@ -122,7 +122,7 @@ const MyBookings = () => {
     try {
       const { data } = await axios.delete(`/api/bookings/cancel/${bookingToCancel._id}`, { withCredentials: true });
       if (data.success) {
-        toast.success("Đã hủy đặt phòng thành công");
+        toast.success("Booking cancelled successfully");
         setBookingData(prev => prev.map(b =>
           b._id === bookingToCancel._id ? { ...b, status: 'Cancelled' } : b
         ));
@@ -132,7 +132,7 @@ const MyBookings = () => {
         toast.error(data.message);
       }
     } catch (error) {
-      toast.error(error.response?.data?.message || "Hủy đặt phòng thất bại");
+      toast.error(error.response?.data?.message || "Cancellation failed");
     }
   };
 
@@ -141,9 +141,9 @@ const MyBookings = () => {
   const getStatusConfig = (status) => {
     const s = status?.toLowerCase();
     const configs = {
-      confirmed: { color: 'success', label: 'Đã xác nhận', icon: <CheckCircleIcon sx={{ fontSize: 16 }} />, bg: '#f0fdf4', border: '#86efac' },
-      pending: { color: 'warning', label: 'Chờ xác nhận', icon: <PendingIcon sx={{ fontSize: 16 }} />, bg: '#fffbeb', border: '#fcd34d' },
-      cancelled: { color: 'error', label: 'Đã hủy', icon: <BlockIcon sx={{ fontSize: 16 }} />, bg: '#fef2f2', border: '#fca5a5' },
+      confirmed: { color: 'success', label: 'Confirmed', icon: <CheckCircleIcon sx={{ fontSize: 16 }} />, bg: '#f0fdf4', border: '#86efac' },
+      pending: { color: 'warning', label: 'Pending', icon: <PendingIcon sx={{ fontSize: 16 }} />, bg: '#fffbeb', border: '#fcd34d' },
+      cancelled: { color: 'error', label: 'Cancelled', icon: <BlockIcon sx={{ fontSize: 16 }} />, bg: '#fef2f2', border: '#fca5a5' },
     };
     return configs[s] || { color: 'default', label: status, icon: null, bg: '#f9fafb', border: '#e5e7eb' };
   };
@@ -172,7 +172,7 @@ const MyBookings = () => {
     return (
       <Box sx={{ minHeight: '70vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 2 }}>
         <CircularProgress size={48} thickness={4} />
-        <Typography color="text.secondary">Đang tải lịch sử đặt phòng...</Typography>
+        <Typography color="text.secondary">Loading your booking history...</Typography>
       </Box>
     );
   }
@@ -183,7 +183,7 @@ const MyBookings = () => {
         <Box sx={{ position: 'fixed', inset: 0, bgcolor: 'rgba(0,0,0,0.5)', zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <Paper sx={{ p: 4, borderRadius: 3, textAlign: 'center' }}>
             <CircularProgress sx={{ mb: 2 }} />
-            <Typography>Đang xử lý thanh toán...</Typography>
+            <Typography>Processing payment...</Typography>
           </Paper>
         </Box>
       )}
@@ -192,20 +192,20 @@ const MyBookings = () => {
         {/* Header */}
         <Box mb={5}>
           <Typography variant="h3" fontWeight="900" gutterBottom sx={{ background: 'linear-gradient(135deg, #1e3a5f, #2563eb)', backgroundClip: 'text', WebkitBackgroundClip: 'text', color: 'transparent' }}>
-            Lịch Sử Đặt Phòng
+            My Bookings
           </Typography>
           <Typography variant="body1" color="text.secondary">
-            Quản lý và theo dõi tất cả đặt phòng của bạn
+            Manage and track all your reservations
           </Typography>
         </Box>
 
         {/* Stats Cards */}
         <Grid container spacing={2} mb={4}>
           {[
-            { label: 'Tổng đặt phòng', value: stats.total, color: '#3b82f6', bg: '#eff6ff', icon: <HotelIcon /> },
-            { label: 'Đã xác nhận', value: stats.confirmed, color: '#22c55e', bg: '#f0fdf4', icon: <CheckCircleIcon /> },
-            { label: 'Chờ xác nhận', value: stats.pending, color: '#f59e0b', bg: '#fffbeb', icon: <PendingIcon /> },
-            { label: 'Tổng chi tiêu', value: formatPrice(stats.totalSpent), color: '#8b5cf6', bg: '#f5f3ff', icon: <PaymentIcon /> },
+            { label: 'Total Bookings', value: stats.total, color: '#3b82f6', bg: '#eff6ff', icon: <HotelIcon /> },
+            { label: 'Confirmed', value: stats.confirmed, color: '#22c55e', bg: '#f0fdf4', icon: <CheckCircleIcon /> },
+            { label: 'Pending', value: stats.pending, color: '#f59e0b', bg: '#fffbeb', icon: <PendingIcon /> },
+            { label: 'Total Spent', value: formatPrice(stats.totalSpent), color: '#8b5cf6', bg: '#f5f3ff', icon: <PaymentIcon /> },
           ].map((stat) => (
             <Grid item xs={6} sm={3} key={stat.label}>
               <Paper elevation={0} sx={{ p: 2.5, borderRadius: 3, border: '1px solid #e8eaf6', bgcolor: stat.bg, transition: 'transform 0.2s', '&:hover': { transform: 'translateY(-2px)' } }}>
@@ -324,12 +324,12 @@ const MyBookings = () => {
                           <Stack direction="row" alignItems="center" spacing={0.5}>
                             <PeopleIcon sx={{ fontSize: 14, color: 'text.secondary' }} />
                             <Typography variant="caption" color="text.secondary">
-                              {booking.persons} khách
+                              {booking.persons} guest{booking.persons > 1 ? 's' : ''}
                             </Typography>
                             <Typography variant="caption" color="text.secondary" sx={{ mx: 0.5 }}>·</Typography>
                             <NightsStayIcon sx={{ fontSize: 14, color: 'text.secondary' }} />
                             <Typography variant="caption" color="text.secondary">
-                              {nights} đêm
+                              {nights} night{nights > 1 ? 's' : ''}
                             </Typography>
                           </Stack>
                         </Box>
@@ -370,13 +370,13 @@ const MyBookings = () => {
                           {formatPrice(booking.totalPrice)}
                         </Typography>
                         <Typography variant="caption" color="text.secondary">
-                          Tổng tiền
+                          Total
                         </Typography>
                         <Box mt={1}>
                           {booking.isPaid ? (
-                            <Chip label="✅ Đã thanh toán" size="small" color="success" variant="outlined" sx={{ fontWeight: 600 }} />
+                            <Chip label="✅ Paid" size="small" color="success" variant="outlined" sx={{ fontWeight: 600 }} />
                           ) : booking.status?.toLowerCase() !== 'cancelled' ? (
-                            <Chip label="⏳ Chưa thanh toán" size="small" color="warning" variant="outlined" sx={{ fontWeight: 600 }} />
+                            <Chip label="⏳ Unpaid" size="small" color="warning" variant="outlined" sx={{ fontWeight: 600 }} />
                           ) : null}
                         </Box>
                       </Box>
@@ -399,7 +399,7 @@ const MyBookings = () => {
                               '&:hover': { background: 'linear-gradient(135deg, #6d28d9, #4338ca)' }
                             }}
                           >
-                            Thanh toán
+                            Pay Now
                           </Button>
                         )}
 
@@ -412,7 +412,7 @@ const MyBookings = () => {
                             onClick={() => handleEditClick(booking)}
                             sx={{ borderRadius: 2, fontWeight: 600 }}
                           >
-                            Chỉnh sửa
+                            Edit
                           </Button>
                         )}
 
@@ -426,13 +426,13 @@ const MyBookings = () => {
                             onClick={() => { setBookingToCancel(booking); setCancelDialog(true); }}
                             sx={{ borderRadius: 2, fontWeight: 600 }}
                           >
-                            Hủy đặt phòng
+                            Cancel Booking
                           </Button>
                         )}
 
                         {booking.status?.toLowerCase() === 'cancelled' && (
                           <Typography variant="caption" color="text.secondary" textAlign="center" display="block" mt={1}>
-                            Đặt phòng này đã bị hủy
+                            This booking has been cancelled
                           </Typography>
                         )}
                       </Stack>
@@ -448,10 +448,10 @@ const MyBookings = () => {
             <Paper elevation={0} sx={{ textAlign: 'center', py: 10, borderRadius: 3, border: '1px dashed #e5e7eb' }}>
               <HotelIcon sx={{ fontSize: 64, color: '#d1d5db', mb: 2 }} />
               <Typography variant="h6" color="text.secondary" gutterBottom>
-                {filterStatus === 'all' ? 'Chưa có đặt phòng nào' : `Không có đặt phòng "${STATUS_TABS.find(t => t.value === filterStatus)?.label}"`}
+                {filterStatus === 'all' ? 'No bookings yet' : `No "${STATUS_TABS.find(t => t.value === filterStatus)?.label}" bookings`}
               </Typography>
               <Typography variant="body2" color="text.secondary">
-                {filterStatus === 'all' ? 'Hãy khám phá các khách sạn tuyệt vời của chúng tôi!' : 'Thử chọn bộ lọc khác'}
+                {filterStatus === 'all' ? 'Explore our amazing hotels and book your stay!' : 'Try a different filter'}
               </Typography>
             </Paper>
           )}
@@ -460,34 +460,34 @@ const MyBookings = () => {
 
       {/* Edit Dialog */}
       <Dialog open={editDialog} onClose={() => setEditDialog(false)} maxWidth="sm" fullWidth PaperProps={{ sx: { borderRadius: 3 } }}>
-        <DialogTitle sx={{ fontWeight: 700 }}>✏️ Chỉnh sửa đặt phòng</DialogTitle>
+        <DialogTitle sx={{ fontWeight: 700 }}>✏️ Edit Booking</DialogTitle>
         <DialogContent>
           <Stack spacing={3} mt={2}>
-            <TextField fullWidth label="Ngày check-in" type="date" value={editForm.checkIn}
+            <TextField fullWidth label="Check-in Date" type="date" value={editForm.checkIn}
               onChange={(e) => setEditForm({ ...editForm, checkIn: e.target.value })}
               InputLabelProps={{ shrink: true }} inputProps={{ min: today }} />
-            <TextField fullWidth label="Ngày check-out" type="date" value={editForm.checkOut}
+            <TextField fullWidth label="Check-out Date" type="date" value={editForm.checkOut}
               onChange={(e) => setEditForm({ ...editForm, checkOut: e.target.value })}
               InputLabelProps={{ shrink: true }} inputProps={{ min: editForm.checkIn || today }} />
-            <TextField fullWidth label="Số khách" type="number" value={editForm.persons}
+            <TextField fullWidth label="Number of Guests" type="number" value={editForm.persons}
               onChange={(e) => setEditForm({ ...editForm, persons: parseInt(e.target.value) })}
               InputProps={{ inputProps: { min: 1, max: 10 } }} />
           </Stack>
         </DialogContent>
         <DialogActions sx={{ px: 3, pb: 3 }}>
-          <Button onClick={() => setEditDialog(false)} variant="outlined" sx={{ borderRadius: 2 }}>Hủy</Button>
-          <Button onClick={handleEditSubmit} variant="contained" sx={{ borderRadius: 2, fontWeight: 700 }}>Lưu thay đổi</Button>
+          <Button onClick={() => setEditDialog(false)} variant="outlined" sx={{ borderRadius: 2 }}>Cancel</Button>
+          <Button onClick={handleEditSubmit} variant="contained" sx={{ borderRadius: 2, fontWeight: 700 }}>Save Changes</Button>
         </DialogActions>
       </Dialog>
 
       {/* Cancel Dialog */}
       <Dialog open={cancelDialog} onClose={() => setCancelDialog(false)} maxWidth="sm" fullWidth PaperProps={{ sx: { borderRadius: 3 } }}>
         <DialogTitle sx={{ display: 'flex', alignItems: 'center', gap: 1, color: 'error.main', fontWeight: 700 }}>
-          <WarningAmberIcon color="error" /> Xác nhận hủy đặt phòng
+          <WarningAmberIcon color="error" /> Confirm Cancellation
         </DialogTitle>
         <DialogContent>
           <DialogContentText mb={2}>
-            Bạn có chắc muốn hủy đặt phòng này không? Hành động này không thể hoàn tác.
+            Are you sure you want to cancel this booking? This action cannot be undone.
           </DialogContentText>
           {bookingToCancel && (
             <Box sx={{ p: 2.5, bgcolor: '#fef2f2', borderRadius: 2, border: '1px solid #fca5a5' }}>
@@ -498,8 +498,8 @@ const MyBookings = () => {
           )}
         </DialogContent>
         <DialogActions sx={{ px: 3, pb: 3 }}>
-          <Button onClick={() => setCancelDialog(false)} variant="outlined" sx={{ borderRadius: 2 }}>Giữ đặt phòng</Button>
-          <Button onClick={handleConfirmCancel} variant="contained" color="error" sx={{ borderRadius: 2, fontWeight: 700 }}>Hủy đặt phòng</Button>
+          <Button onClick={() => setCancelDialog(false)} variant="outlined" sx={{ borderRadius: 2 }}>Keep Booking</Button>
+          <Button onClick={handleConfirmCancel} variant="contained" color="error" sx={{ borderRadius: 2, fontWeight: 700 }}>Cancel Booking</Button>
         </DialogActions>
       </Dialog>
     </Box>
