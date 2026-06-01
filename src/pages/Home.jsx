@@ -1,10 +1,9 @@
 import React from 'react'
-import Navbar from '../components/Navbar';
-import Hero from '../components/Hero';
-import MostPicked from '../components/MostPicked';
-import PopularRooms from '../components/PopularRooms';
-import Testimonial from '../components/Testimonial';
-import NewsLetter from '../components/NewsLetter';
+import Hero from '../components/home/Hero';
+import MostPicked from '../components/home/MostPicked';
+import PopularRooms from '../components/home/PopularRooms';
+import Testimonial from '../components/home/Testimonial';
+import NewsLetter from '../components/home/NewsLetter';
 
 const Home = () => {
   return (

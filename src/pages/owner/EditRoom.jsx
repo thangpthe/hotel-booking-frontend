@@ -23,7 +23,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import axios from 'axios';
 import toast from 'react-hot-toast';
-import Loading from '../../components/Loading';
+import Loading from '../../components/common/Loading';
 
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 

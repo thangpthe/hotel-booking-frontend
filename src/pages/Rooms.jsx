@@ -1,10 +1,10 @@
 /* eslint-disable react-hooks/set-state-in-effect */
 import React, { useEffect, useState } from 'react'
-import PopularRooms from '../components/PopularRooms';
+import PopularRooms from '../components/home/PopularRooms';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import { Box, Container, Grid, Typography } from '@mui/material';
-import RoomCard from '../components/RoomCard';
+import RoomCard from '../components/booking/RoomCard';
 // const backendUrl = import.meta.env.VITE_BACKEND_URL;
 const Rooms = () => {
 

@@ -18,8 +18,8 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CancelIcon from '@mui/icons-material/Cancel';
 import axios from 'axios';
 import toast from 'react-hot-toast';
-import Loading from '../components/Loading';
-import RoomCard from '../components/RoomCard';
+import Loading from '../components/common/Loading';
+import RoomCard from '../components/booking/RoomCard';
 
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 

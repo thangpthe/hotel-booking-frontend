@@ -3,8 +3,8 @@ import { Toaster } from "react-hot-toast";
 import { AppContext } from "./context/AppContext";
 
 // --- COMPONENTS ---
-import Navbar from "./components/Navbar";
-import Footer from "./components/Footer";
+import Navbar from "./components/common/Navbar";
+import Footer from "./components/common/Footer";
 
 // --- PAGES: CLIENT ---
 import Home from './pages/Home';
@@ -25,8 +25,8 @@ import RegisterHotel from "./pages/owner/RegisterHotel";
 import AllRooms from "./pages/owner/AllRooms";
 import AddRoom from "./pages/owner/AddRoom";
 import Bookings from "./pages/owner/Bookings";
-import OwnerRoute from "./components/OwnerRoute";
-import Loader from "./components/Loader";
+import OwnerRoute from "./components/common/OwnerRoute";
+import Loader from "./components/common/Loader";
 import SingleHotel from "./pages/SingleHotel";
 import EditHotel from "./pages/owner/EditHotel";
 import EditRoom from "./pages/owner/EditRoom";

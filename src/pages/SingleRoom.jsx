@@ -43,8 +43,8 @@ import axios from 'axios';
 import toast from 'react-hot-toast';
 import { useState } from 'react';
 import { useEffect } from 'react';
-import Loading from '../components/Loading';
-import BookingForm from '../components/BookingForm';
+import Loading from '../components/common/Loading';
+import BookingForm from '../components/booking/BookingForm';
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 const SingleRoom = () => {
   const { id } = useParams();

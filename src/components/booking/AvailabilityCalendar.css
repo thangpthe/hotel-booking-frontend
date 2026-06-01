@@ -1,0 +1,36 @@
+/* AvailabilityCalendar custom styles */
+
+/* Override react-date-range disabled day style */
+.rdrDayDisabled {
+  background-color: rgba(239, 68, 68, 0.06) !important;
+  cursor: not-allowed !important;
+}
+
+.rdrDayDisabled .rdrDayNumber span {
+  color: #ef4444 !important;
+}
+
+/* Selected range */
+.rdrInRange {
+  background-color: rgba(59, 130, 246, 0.15) !important;
+}
+
+.rdrStartEdge,
+.rdrEndEdge {
+  background-color: #3b82f6 !important;
+}
+
+/* Hover state */
+.rdrDay:not(.rdrDayDisabled):hover .rdrDayNumber span {
+  color: #3b82f6;
+}
+
+/* Calendar header */
+.rdrMonthAndYearPickers select {
+  font-weight: 600;
+}
+
+/* Day number */
+.rdrDayNumber span {
+  font-size: 13px;
+}
