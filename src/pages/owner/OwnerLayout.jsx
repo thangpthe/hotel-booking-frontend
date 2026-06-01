@@ -15,7 +15,6 @@ import MenuIcon from '@mui/icons-material/Menu';
 import LogoutIcon from '@mui/icons-material/Logout';
 import PersonIcon from '@mui/icons-material/Person';
 import { AppContext } from '../../context/AppContext';
-import { assets } from '../../assets/assets';
 import toast from 'react-hot-toast';
 import axios from 'axios';
 

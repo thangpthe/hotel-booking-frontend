@@ -1,5 +1,5 @@
 import React from 'react';
-import { assets } from '../assets/assets';
+import { assets } from '../../assets/assets';
 import { Button, Container, Grid, Typography, Box, Stack } from '@mui/material';
 
 const Hero = () => {

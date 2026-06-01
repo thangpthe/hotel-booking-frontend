@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/set-state-in-effect */
 import React, { useEffect, useState } from 'react'
-import RoomCard from './RoomCard';
+import RoomCard from '../booking/RoomCard';
 import { Box, Container, Grid, Typography } from '@mui/material';
 import axios from 'axios';
 import toast from 'react-hot-toast';

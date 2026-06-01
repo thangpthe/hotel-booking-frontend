@@ -5,7 +5,7 @@ import LocationOnIcon from '@mui/icons-material/LocationOn';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import PersonIcon from '@mui/icons-material/Person';
 import toast from 'react-hot-toast';
-import { cities } from '../assets/assets'; 
+import { cities } from '../../assets/assets'; 
 
 
 const SearchBar = () => {

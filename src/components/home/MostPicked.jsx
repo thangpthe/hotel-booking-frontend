@@ -1,6 +1,5 @@
 /* eslint-disable react-hooks/set-state-in-effect */
 import React, {useEffect, useState } from 'react'
-import { AppContext } from '../context/AppContext'
 import { Box, Card, CardContent, CardMedia, Chip, Container, Grid, Stack, Typography } from '@mui/material';
 import axios from 'axios';
 const backendUrl = import.meta.env.VITE_BACKEND_URL;

@@ -1,5 +1,5 @@
 import React, { useContext } from 'react'
-import { AppContext } from '../context/AppContext'
+import { AppContext } from '../../context/AppContext'
 import { Box, Button, Card, CardActions, CardContent, CardMedia, Chip, Typography } from '@mui/material';
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 const RoomCard = ({room}) => {
